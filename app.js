@@ -1,43 +1,11 @@
 // Productos de la panadería organizados por categorías
-const categorias = {
-    bebidas: [
-        { id: 1, nombre: 'Americano Chico', precio: 20.00, categoria: 'bebidas' },
-        { id: 2, nombre: 'Americano Grande', precio: 25.00, categoria: 'bebidas' }
-    ],
-    panDulce: [
-        { id: 3, nombre: 'Croissant Almendra', precio: 25.00, categoria: 'panDulce' },
-        { id: 4, nombre: 'Croissant Cristal', precio: 22.00, categoria: 'panDulce' },
-        { id: 5, nombre: 'Croissant Chocolate', precio: 28.00, categoria: 'panDulce' },
-        { id: 6, nombre: 'Concha', precio: 8.00, categoria: 'panDulce' },
-        { id: 7, nombre: 'Cuernito', precio: 10.00, categoria: 'panDulce' },
-        { id: 8, nombre: 'Dona', precio: 12.00, categoria: 'panDulce' },
-        { id: 9, nombre: 'Ojo de Buey', precio: 12.00, categoria: 'panDulce' }
-    ],
-    panBlanco: [
-        { id: 10, nombre: 'Pan Blanco', precio: 15.00, categoria: 'panBlanco' },
-        { id: 11, nombre: 'Pan Integral', precio: 18.00, categoria: 'panBlanco' },
-        { id: 12, nombre: 'Bolillo', precio: 3.00, categoria: 'panBlanco' },
-        { id: 13, nombre: 'Bisquet', precio: 5.00, categoria: 'panBlanco' }
-    ],
-    hogazas: [
-        { id: 14, nombre: 'Hogaza', precio: 35.00, categoria: 'hogazas' },
-        { id: 15, nombre: 'Baguette', precio: 20.00, categoria: 'hogazas' }
-    ]
-};
+const categorias = {};
 
 // Metadatos de categorías (nombres y colores)
-let categoriasInfo = {
-    bebidas: { nombre: 'Bebidas', color: '#3498db' },
-    panDulce: { nombre: 'Pan Dulce', color: '#2ecc71' },
-    panBlanco: { nombre: 'Pan Blanco', color: '#e74c3c' },
-    hogazas: { nombre: 'Hogazas / Baguette', color: '#f39c12' }
-};
+let categoriasInfo = {};
 
 // Array plano de todos los productos
 const productos = [];
-Object.keys(categorias).forEach(cat => {
-    productos.push(...categorias[cat]);
-});
 
 // Estado de la aplicación
 let carrito = [];
@@ -865,6 +833,7 @@ function importarCSV(event) {
             
             let productosImportados = 0;
             let errores = [];
+            let categoriasCreadas = [];
             
             // Detectar si la primera línea es encabezado
             const primeraLinea = lineas[0].toLowerCase();
@@ -873,6 +842,9 @@ function importarCSV(event) {
             
             // Obtener el ID máximo actual
             let maxId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) : 0;
+            
+            // Colores predefinidos para categorías automáticas
+            const coloresDisponibles = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#34495e'];
             
             for (let i = inicio; i < lineas.length; i++) {
                 const linea = lineas[i].trim();
@@ -888,7 +860,7 @@ function importarCSV(event) {
                 
                 const nombre = valores[0].replace(/"/g, '').trim();
                 const precio = parseFloat(valores[1].replace(/"/g, '').trim());
-                const categoria = valores[2].replace(/"/g, '').trim();
+                const categoriaNombre = valores[2].replace(/"/g, '').trim();
                 
                 // Validar datos
                 if (!nombre) {
@@ -901,9 +873,23 @@ function importarCSV(event) {
                     continue;
                 }
                 
-                if (!categorias[categoria]) {
-                    errores.push(`Línea ${i + 1}: categoría "${categoria}" no existe`);
-                    continue;
+                // Generar clave de categoría
+                const categoriaKey = categoriaNombre
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '_')
+                    .replace(/[^a-z0-9_]/g, '');
+                
+                // Si la categoría no existe, crearla automáticamente
+                if (!categorias[categoriaKey]) {
+                    categorias[categoriaKey] = [];
+                    const colorIndex = Object.keys(categorias).length % coloresDisponibles.length;
+                    categoriasInfo[categoriaKey] = {
+                        nombre: categoriaNombre,
+                        color: coloresDisponibles[colorIndex]
+                    };
+                    categoriasCreadas.push(categoriaNombre);
                 }
                 
                 // Crear nuevo producto
@@ -912,10 +898,10 @@ function importarCSV(event) {
                     id: maxId,
                     nombre: nombre,
                     precio: precio,
-                    categoria: categoria
+                    categoria: categoriaKey
                 };
                 
-                categorias[categoria].push(nuevoProducto);
+                categorias[categoriaKey].push(nuevoProducto);
                 estadisticas[maxId] = 0;
                 productosImportados++;
             }
@@ -932,9 +918,13 @@ function importarCSV(event) {
             guardarDatosLocalStorage();
             renderizarProductos();
             renderizarListaProductos();
+            actualizarSelectCategorias();
             
             // Mostrar resultado
             let mensaje = `✅ ${productosImportados} productos importados correctamente`;
+            if (categoriasCreadas.length > 0) {
+                mensaje += `\n\n🆕 Categorías creadas: ${categoriasCreadas.join(', ')}`;
+            }
             if (errores.length > 0) {
                 mensaje += `\n\n⚠️ ${errores.length} errores:\n${errores.slice(0, 5).join('\n')}`;
                 if (errores.length > 5) {
@@ -943,7 +933,7 @@ function importarCSV(event) {
             }
             alert(mensaje);
             
-            console.log('📥 CSV importado:', productosImportados, 'productos');
+            console.log('📥 CSV importado:', productosImportados, 'productos', categoriasCreadas.length, 'categorías creadas');
             
         } catch (error) {
             console.error('❌ Error al importar CSV:', error);
@@ -986,18 +976,31 @@ function cancelarFormularioCategoria() {
 }
 
 function guardarCategoria() {
-    const key = document.getElementById('categoriaKey').value.trim().replace(/\s+/g, '');
     const nombre = document.getElementById('categoriaNombre').value.trim();
     const color = document.getElementById('categoriaColor').value;
     const keyEdit = document.getElementById('categoriaKeyEdit').value;
     
-    if (!key || !nombre) {
-        alert('Por favor completa todos los campos');
+    if (!nombre) {
+        alert('Por favor ingresa el nombre de la categoría');
+        return;
+    }
+    
+    // Generar clave automáticamente desde el nombre
+    // Convertir a minúsculas, quitar acentos y espacios
+    const key = nombre
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Quitar acentos
+        .replace(/\s+/g, '_') // Reemplazar espacios con guiones bajos
+        .replace(/[^a-z0-9_]/g, ''); // Quitar caracteres especiales
+    
+    if (!key) {
+        alert('El nombre debe contener al menos letras o números');
         return;
     }
     
     if (!keyEdit && categorias[key]) {
-        alert('Ya existe una categoría con esta clave');
+        alert('Ya existe una categoría con ese nombre');
         return;
     }
     
@@ -1042,8 +1045,6 @@ function editarCategoria(key) {
         document.getElementById('formularioCategoria').classList.remove('hidden');
         document.getElementById('tituloCategoriaForm').textContent = 'Editar Categoría';
         document.getElementById('categoriaKeyEdit').value = key;
-        document.getElementById('categoriaKey').value = key;
-        document.getElementById('categoriaKey').disabled = true;
         document.getElementById('categoriaNombre').value = info.nombre;
         document.getElementById('categoriaColor').value = info.color;
     }
@@ -1104,6 +1105,11 @@ function seleccionarMetodoVentaManual(metodo) {
 }
 
 function eliminarCategoria(key) {
+    if (!categorias[key]) {
+        alert('La categoría no existe.');
+        return;
+    }
+    
     if (categorias[key].length > 0) {
         alert('No se puede eliminar una categoría que tiene productos. Elimina primero los productos.');
         return;
