@@ -1049,6 +1049,60 @@ function editarCategoria(key) {
     }
 }
 
+// ========== VENTA MANUAL ==========
+
+function abrirModalVentaManual() {
+    document.getElementById('modalVentaManual').classList.remove('hidden');
+    document.getElementById('montoVentaManual').value = '';
+    document.getElementById('descripcionVentaManual').value = '';
+    document.getElementById('montoVentaManual').focus();
+}
+
+function cerrarModalVentaManual() {
+    document.getElementById('modalVentaManual').classList.add('hidden');
+}
+
+function seleccionarMetodoVentaManual(metodo) {
+    const monto = parseFloat(document.getElementById('montoVentaManual').value);
+    const descripcion = document.getElementById('descripcionVentaManual').value.trim();
+    
+    if (!monto || monto <= 0) {
+        alert('Por favor ingresa un monto válido mayor a 0');
+        return;
+    }
+    
+    if (!confirm(`¿Confirmar venta manual de $${monto.toFixed(2)} con ${metodo === 'tarjeta' ? 'tarjeta' : 'efectivo'}?`)) {
+        return;
+    }
+    
+    // Registrar la venta manual
+    ventasTotales += monto;
+    numTransacciones++;
+    
+    if (metodo === 'efectivo') {
+        ventasEfectivo += monto;
+    } else if (metodo === 'tarjeta') {
+        ventasTarjeta += monto;
+    }
+    
+    // Guardar en localStorage
+    guardarDatosLocalStorage();
+    
+    // Actualizar estadísticas
+    actualizarEstadisticas();
+    
+    // Cerrar modal
+    cerrarModalVentaManual();
+    
+    let mensaje = `✅ Venta manual registrada: $${monto.toFixed(2)}\nMétodo: ${metodo === 'tarjeta' ? 'Tarjeta' : 'Efectivo'}`;
+    if (descripcion) {
+        mensaje += `\nDescripción: ${descripcion}`;
+    }
+    alert(mensaje);
+    
+    console.log('💰 Venta manual registrada:', { monto, metodo, descripcion });
+}
+
 function eliminarCategoria(key) {
     if (categorias[key].length > 0) {
         alert('No se puede eliminar una categoría que tiene productos. Elimina primero los productos.');
