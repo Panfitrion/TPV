@@ -39,12 +39,16 @@
                     </div>
                 </div>
 
+                <div class="operaciones">
+                    <h2>💼 Operaciones</h2>
+                    <button class="btn-admin" onclick="abrirModalVentaManual()">💰 Venta Manual</button>
+                    <button class="btn-admin" onclick="abrirModalRetiro()">💸 Retirar Efectivo</button>
+                </div>
+
                 <div class="admin">
                     <h2>⚙️ Administración</h2>
-                    <button class="btn-admin" onclick="abrirModalVentaManual()">💰 Venta Manual</button>
                     <button class="btn-admin" onclick="abrirModalProductos()">Ver Productos</button>
                     <button class="btn-admin" onclick="abrirModalReporte()">Ver Reporte</button>
-                    <button class="btn-admin" onclick="abrirModalRetiro()">💸 Retirar Efectivo</button>
                 </div>
             </section>
         </div>
@@ -126,11 +130,7 @@
                         <h4 id="tituloCategoriaForm">Nueva Categoría</h4>
                         <input type="hidden" id="categoriaKeyEdit">
                         <div class="form-group">
-                            <label>Clave (ID interno):</label>
-                            <input type="text" id="categoriaKey" placeholder="ej: postres" pattern="[a-zA-Z]+">
-                        </div>
-                        <div class="form-group">
-                            <label>Nombre a mostrar:</label>
+                            <label>Nombre:</label>
                             <input type="text" id="categoriaNombre" placeholder="ej: Postres">
                         </div>
                         <div class="form-group">
