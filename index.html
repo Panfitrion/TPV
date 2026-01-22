@@ -41,6 +41,7 @@
 
                 <div class="admin">
                     <h2>⚙️ Administración</h2>
+                    <button class="btn-admin" onclick="abrirModalVentaManual()">💰 Venta Manual</button>
                     <button class="btn-admin" onclick="abrirModalProductos()">Ver Productos</button>
                     <button class="btn-admin" onclick="abrirModalReporte()">Ver Reporte</button>
                     <button class="btn-admin" onclick="abrirModalRetiro()">💸 Retirar Efectivo</button>
@@ -257,6 +258,33 @@
                 <p style="text-align: center; color: #666; margin-top: 15px; font-size: 14px;">
                     Cerrando automáticamente...
                 </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Venta Manual -->
+    <div id="modalVentaManual" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💰 Venta Manual</h2>
+                <span class="modal-close" onclick="cerrarModalVentaManual()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Monto de la venta:</label>
+                    <input type="number" id="montoVentaManual" placeholder="0.00" step="0.01" min="0" autofocus>
+                </div>
+                <div class="form-group">
+                    <label>Método de pago:</label>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('tarjeta')" style="flex: 1;">💳 Tarjeta</button>
+                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('efectivo')" style="flex: 1;">💵 Efectivo</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción (opcional):</label>
+                    <textarea id="descripcionVentaManual" placeholder="Ej: Producto especial, pedido personalizado, etc." rows="2"></textarea>
+                </div>
             </div>
         </div>
     </div>
