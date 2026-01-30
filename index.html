@@ -18,35 +18,10 @@
             </div>
             <h3 style="margin-bottom: 15px; text-align:center;">Selecciona con qué paga:</h3>
             <div class="billetes-grid">
-                <div class="billete" onclick="pantallaEfectivoAgregar(500)">
-                    <img src="DINERO/500 pesos.png" alt="$500" class="img-billete">
-                </div>
-                <div class="billete" onclick="pantallaEfectivoAgregar(200)">
-                    <img src="DINERO/200 pesos.png" alt="$200" class="img-billete">
-                </div>
-                <div class="billete" onclick="pantallaEfectivoAgregar(100)">
-                    <img src="DINERO/100 pesos.png" alt="$100" class="img-billete">
-                </div>
-                <div class="billete" onclick="pantallaEfectivoAgregar(50)">
-                    <img src="DINERO/50 pesos.png" alt="$50" class="img-billete">
-                </div>
-                <div class="billete" onclick="pantallaEfectivoAgregar(20)">
-                    <img src="DINERO/20 pesos.png" alt="$20" class="img-billete">
-                </div>
-                <div class="monedas-row">
-                    <div class="moneda" onclick="pantallaEfectivoAgregar(10)">
-                        <img src="DINERO/10 pesos.png" alt="$10" class="img-moneda">
-                    </div>
-                    <div class="moneda" onclick="pantallaEfectivoAgregar(5)">
-                        <img src="DINERO/5 pesos.png" alt="$5" class="img-moneda">
-                    </div>
-                    <div class="moneda" onclick="pantallaEfectivoAgregar(2)">
-                        <img src="DINERO/2 pesos.png" alt="$2" class="img-moneda">
-                    </div>
-                    <div class="moneda" onclick="pantallaEfectivoAgregar(1)">
-                        <img src="DINERO/1 peso.png" alt="$1" class="img-moneda">
-                    </div>
-                </div>
+                <!-- Los billetes se renderizan dinámicamente por JS -->
+            </div>
+            <div class="monedas-row">
+                <!-- Las monedas se renderizan dinámicamente por JS -->
             </div>
             <div class="monto-recibido-display">
                 <label>Monto recibido: <strong>$<span id="pantallaEfectivoRecibido">0.00</span></strong></label>
@@ -241,63 +216,6 @@
         </div>
     </div>
 
-    <!-- Modal Efectivo -->
-    <div id="modalEfectivo" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>💵 Pago en Efectivo</h2>
-                <span class="modal-close" onclick="cerrarModalEfectivo()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="total-a-pagar">
-                    <h3>Total a pagar: <span id="totalAPagar">$0.00</span></h3>
-                </div>
-                <h3 style="margin-bottom: 15px;">Selecciona con qué paga:</h3>
-                <div class="billetes-grid">
-                    <div class="billete" onclick="agregarDenominacion(500)">
-                        <img src="DINERO/500 pesos.png" alt="$500" class="img-billete">
-                    </div>
-                    <div class="billete" onclick="agregarDenominacion(200)">
-                        <img src="DINERO/200 pesos.png" alt="$200" class="img-billete">
-                    </div>
-                    <div class="billete" onclick="agregarDenominacion(100)">
-                        <img src="DINERO/100 pesos.png" alt="$100" class="img-billete">
-                    </div>
-                    <div class="billete" onclick="agregarDenominacion(50)">
-                        <img src="DINERO/50 pesos.png" alt="$50" class="img-billete">
-                    </div>
-                    <div class="billete" onclick="agregarDenominacion(20)">
-                        <img src="DINERO/20 pesos.png" alt="$20" class="img-billete">
-                    </div>
-                    <div class="monedas-row">
-                        <div class="moneda" onclick="agregarDenominacion(10)">
-                            <img src="DINERO/10 pesos.png" alt="$10" class="img-moneda">
-                        </div>
-                        <div class="moneda" onclick="agregarDenominacion(5)">
-                            <img src="DINERO/5 pesos.png" alt="$5" class="img-moneda">
-                        </div>
-                        <div class="moneda" onclick="agregarDenominacion(2)">
-                            <img src="DINERO/2 pesos.png" alt="$2" class="img-moneda">
-                        </div>
-                        <div class="moneda" onclick="agregarDenominacion(1)">
-                            <img src="DINERO/1 peso.png" alt="$1" class="img-moneda">
-                        </div>
-                    </div>
-                </div>
-                <div class="monto-recibido-display">
-                    <label>Monto recibido: <strong>$<span id="montoRecibidoDisplay">0.00</span></strong></label>
-                    <input type="hidden" id="montoRecibido" value="0">
-                    <button class="btn-resetear" onclick="resetearMonto()">Limpiar</button>
-                </div>
-                
-                <div class="cambio-modal">
-                    <h3>Cambio: <span id="cambioDisplay">0.00</span></h3>
-                </div>
-                
-                <button class="btn-cerrar-venta" onclick="confirmarPagoEfectivo()">Cerrar Venta</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal Cambio -->
     <div id="modalCambio" class="modal hidden">
@@ -463,6 +381,67 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js?v=2"></script>
+    <script>
+    // --- Orden y renderizado dinámico de billetes y monedas con drag & drop ---
+    const denominacionesBilletes = [500, 200, 100, 50, 20];
+    const denominacionesMonedas = [10, 5, 2, 1];
+
+    function renderizarBilletesYMonedas() {
+        const billetesGrid = document.querySelector('.billetes-grid');
+        const monedasRow = document.querySelector('.monedas-row');
+        billetesGrid.innerHTML = '';
+        monedasRow.innerHTML = '';
+        denominacionesBilletes.forEach(valor => {
+            const div = document.createElement('div');
+            div.className = 'billete';
+            div.draggable = true;
+            div.dataset.valor = valor;
+            div.innerHTML = `<img src="DINERO/${valor} pesos.png" alt="$${valor}" class="img-billete">`;
+            div.onclick = () => pantallaEfectivoAgregar(valor);
+            agregarDragDrop(div, denominacionesBilletes, renderizarBilletesYMonedas);
+            billetesGrid.appendChild(div);
+        });
+        denominacionesMonedas.forEach(valor => {
+            const div = document.createElement('div');
+            div.className = 'moneda';
+            div.draggable = true;
+            div.dataset.valor = valor;
+            div.innerHTML = `<img src="DINERO/${valor} pesos.png" alt="$${valor}" class="img-moneda">`;
+            div.onclick = () => pantallaEfectivoAgregar(valor);
+            agregarDragDrop(div, denominacionesMonedas, renderizarBilletesYMonedas);
+            monedasRow.appendChild(div);
+        });
+    }
+
+    function agregarDragDrop(element, array, rerender) {
+        element.addEventListener('dragstart', e => {
+            e.dataTransfer.setData('valor', element.dataset.valor);
+            element.classList.add('dragging');
+        });
+        element.addEventListener('dragend', e => {
+            element.classList.remove('dragging');
+        });
+        element.addEventListener('dragover', e => {
+            e.preventDefault();
+        });
+        element.addEventListener('drop', e => {
+            e.preventDefault();
+            const valorArrastrado = parseInt(e.dataTransfer.getData('valor'));
+            const valorDestino = parseInt(element.dataset.valor);
+            const idxFrom = array.indexOf(valorArrastrado);
+            const idxTo = array.indexOf(valorDestino);
+            if (idxFrom !== -1 && idxTo !== -1 && idxFrom !== idxTo) {
+                array.splice(idxFrom, 1);
+                array.splice(idxTo, 0, valorArrastrado);
+                rerender();
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderizarBilletesYMonedas();
+    });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             cargarDatosLocalStorage();
