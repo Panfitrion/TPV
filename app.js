@@ -369,9 +369,12 @@ function pantallaEfectivoCancelar() {
     document.getElementById('mainContainer').classList.remove('hidden');
 }
 function pantallaEfectivoConfirmar() {
-    // Registrar la venta y limpiar carrito
-    registrarVenta(pantallaEfectivoTotal);
-    limpiarCarrito();
+    // Validar que el monto recibido sea suficiente
+    if (pantallaEfectivoMonto < pantallaEfectivoTotal) {
+        mostrarNotificacion('El monto recibido es insuficiente', 'error');
+        return;
+    }
+    registrarVenta(pantallaEfectivoTotal, pantallaEfectivoMonto);
     mostrarNotificacion('✅ Venta en efectivo registrada', 'success');
     pantallaEfectivoCancelar();
 }
@@ -467,8 +470,10 @@ function cerrarModalCambio() {
 
 // Calcular cambio (para visualización en modal)
 function calcularCambio() {
-    const total = parseFloat(document.getElementById('totalCarrito').textContent) || parseFloat(document.getElementById('totalAPagar').textContent.replace('$', ''));
-    const montoRecibido = parseFloat(document.getElementById('montoRecibido').value) || 0;
+    const total = parseFloat(document.getElementById('totalCarrito').textContent) || parseFloat(document.getElementById('totalAPagar')?.textContent?.replace('$', ''));
+    const input = document.getElementById('montoRecibido');
+    if (!input) return; // Si no existe el input, salir
+    const montoRecibido = parseFloat(input.value) || 0;
     const cambio = montoRecibido - total;
     
     // Actualizar display si existe el elemento cambio
