@@ -9,37 +9,9 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
             requireInteraction: false,
             silent: true
         });
-    } else {
-        // Fallback: notificación en la interfaz
-        const notif = document.createElement('div');
-        notif.className = `notification notification-${tipo}`;
-        notif.textContent = mensaje;
-        document.body.appendChild(notif);
-        
-        setTimeout(() => {
-            notif.classList.add('show');
-        }, 10);
-        
-        setTimeout(() => {
-            notif.classList.remove('show');
-            setTimeout(() => notif.remove(), 300);
-        }, 3000);
     }
 }
 
-// Solicitar permiso para notificaciones al cargar
-function solicitarPermisoNotificaciones() {
-    if ('Notification' in window) {
-        Notification.requestPermission().then(function(permission) {
-            if (permission === 'granted') {
-                mostrarNotificacion('Notificaciones activadas', 'success');
-                // Oculta el botón después de activar
-                const btn = document.getElementById('btnNotificaciones');
-                if (btn) btn.style.display = 'none';
-            }
-        });
-    }
-}
 
 // Productos de la panadería organizados por categorías
 const categorias = {};
@@ -105,11 +77,6 @@ productos.forEach(producto => {
 
 // Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {
-    // Oculta el botón si ya está concedido el permiso
-    if ('Notification' in window && Notification.permission === 'granted') {
-        const btn = document.getElementById('btnNotificaciones');
-        if (btn) btn.style.display = 'none';
-    }
     mostrarFecha();
     cargarDatosLocalStorage(); // Cargar primero los datos guardados
     cargarOperacionesDesdeLocalStorage(); // Cargar operaciones configuradas
