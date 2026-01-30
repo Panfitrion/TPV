@@ -24,23 +24,27 @@
     align-items: center;
 }
 .pantalla-efectivo .billetes-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 40px 30px;
-    justify-items: center;
-    align-items: end;
-    width: 90vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 32px;
+    width: 100vw;
     max-width: 1100px;
     margin: 40px auto 0 auto;
 }
 
 .pantalla-efectivo .monedas-row {
     display: flex;
+    flex-direction: row;
     justify-content: center;
-    gap: 60px;
-    margin: 50px 0 30px 0;
-    width: 100%;
+    align-items: flex-end;
+    gap: 80px;
+    width: 100vw;
+    max-width: 1100px;
+    margin: 120px auto 30px auto;
 }
+
 .pantalla-efectivo .billete, .pantalla-efectivo .moneda {
     display: flex !important;
     flex-direction: column;
@@ -49,8 +53,8 @@
     background: none !important;
     border: none !important;
     box-shadow: none !important;
-    min-width: 80px;
-    min-height: 40px;
+    min-width: 40px;
+    min-height: 20px;
     margin: 0;
     padding: 0;
     cursor: pointer;
@@ -61,8 +65,8 @@
         box-shadow: none !important;
         border-radius: 0 !important;
     display: block !important;
-    width: 200px !important;
-    height: 70px !important;
+    width: 350px !important;
+    height: 85px !important;
     object-fit: contain;
     margin: 0 auto;
     border-radius: 0 !important;
