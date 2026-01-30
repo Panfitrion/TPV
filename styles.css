@@ -31,7 +31,15 @@
     align-items: end;
     width: 90vw;
     max-width: 1100px;
-    margin: 40px auto 30px auto;
+    margin: 40px auto 0 auto;
+}
+
+.pantalla-efectivo .monedas-row {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 50px 0 30px 0;
+    width: 100%;
 }
 .pantalla-efectivo .billete, .pantalla-efectivo .moneda {
     display: flex !important;
@@ -48,9 +56,13 @@
     cursor: pointer;
 }
 .pantalla-efectivo .img-billete {
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
     display: block !important;
-    width: 320px !important;
-    height: 140px !important;
+    width: 200px !important;
+    height: 70px !important;
     object-fit: contain;
     margin: 0 auto;
     border-radius: 0 !important;
@@ -59,6 +71,10 @@
     border: none !important;
 }
 .pantalla-efectivo .img-moneda {
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
     display: block !important;
     width: 140px !important;
     height: 140px !important;
