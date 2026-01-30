@@ -920,8 +920,8 @@ header h1 {
         }
 
         .img-billete {
-            width: 40px;
-            height: 16px;
+            width: 28px;
+            height: 10px;
             object-fit: contain;
             margin: 0 auto;
             border-radius: 7px;
@@ -932,8 +932,8 @@ header h1 {
         }
 
         .img-moneda {
-            width: 14px;
-            height: 14px;
+            width: 8px;
+            height: 8px;
             object-fit: contain;
             margin: 0 auto;
             border-radius: 50%;
@@ -953,9 +953,9 @@ header h1 {
                 gap: 6px 2px;
                 padding: 6px 0 2px 0;
             }
-            .img-billete { width: 32px; height: 12px; }
-            .img-moneda { width: 10px; height: 10px; }
-            .billete, .moneda { min-width: 32px; }
+            .img-billete { width: 18px; height: 7px; }
+            .img-moneda { width: 6px; height: 6px; }
+            .billete, .moneda { min-width: 18px; }
         }
         transform: translateY(-40px) scale(0.95);
         opacity: 0;
