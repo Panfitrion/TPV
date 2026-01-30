@@ -445,14 +445,15 @@ function resetearMonto() {
 function abrirModalEfectivo() {
     const total = parseFloat(document.getElementById('totalCarrito').textContent);
     document.getElementById('totalAPagar').textContent = `$${total.toFixed(2)}`;
-    document.getElementById('modalEfectivo').classList.remove('hidden');
+        document.getElementById('modalEfectivo').classList.remove('hidden');
+        resetearMonto();
     resetearMonto();
 }
 
 // Cerrar modal de efectivo
 function cerrarModalEfectivo() {
     document.getElementById('modalEfectivo').classList.add('hidden');
-    resetearMonto();
+        resetearMonto();
     
     // Asegurar que todo esté limpio
     const cambioDisplay = document.getElementById('cambioDisplay');
