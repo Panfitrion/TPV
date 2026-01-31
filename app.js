@@ -783,43 +783,119 @@ function descargarReporte() {
         });
     }
     
+
     // Crear PDF
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    
     let y = 20;
     const lineHeight = 7;
     const margin = 20;
     const pageWidth = doc.internal.pageSize.width;
-    
+
     // Título
     doc.setFontSize(18);
     doc.setFont(undefined, 'bold');
     doc.text('REPORTE SEMANAL DE VENTAS', pageWidth / 2, y, { align: 'center' });
     y += 10;
-    
     doc.setFontSize(14);
     doc.text('Panadería', pageWidth / 2, y, { align: 'center' });
     y += 10;
-    
     doc.setFontSize(11);
     doc.setFont(undefined, 'normal');
     doc.text(`Semana: ${fechaStr}`, pageWidth / 2, y, { align: 'center' });
     y += 15;
-    
-    // Productos vendidos
+
+    // ====== MÉTRICAS PRINCIPALES (como en el modal) ======
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('MÉTRICAS PRINCIPALES', margin, y);
+    y += lineHeight;
+    doc.setLineWidth(0.5);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += lineHeight;
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    // Total del Día
+    doc.text('Total del Día:', margin, y);
+    doc.text(`$${ventasTotales.toFixed(2)}`, pageWidth - margin - 30, y);
+    y += lineHeight;
+    // Transacciones
+    doc.text('Transacciones:', margin, y);
+    doc.text(`${numTransacciones}`, pageWidth - margin - 30, y);
+    y += lineHeight;
+    // Ticket Promedio
+    const ticketPromedio = numTransacciones > 0 ? ventasTotales / numTransacciones : 0;
+    doc.text('Ticket Promedio:', margin, y);
+    doc.text(`$${ticketPromedio.toFixed(2)}`, pageWidth - margin - 30, y);
+    y += lineHeight;
+    // Más Vendido
+    const productoMasVendido = (() => {
+        let maxCantidad = 0;
+        let nombre = '-';
+        Object.keys(estadisticas).forEach(pid => {
+            if (estadisticas[pid] > maxCantidad) {
+                maxCantidad = estadisticas[pid];
+                const prod = productos.find(p => p.id == pid);
+                if (prod) nombre = prod.nombre;
+            }
+        });
+        return nombre;
+    })();
+    doc.text('Más Vendido:', margin, y);
+    doc.text(productoMasVendido, pageWidth - margin - 30, y);
+    y += lineHeight + 5;
+
+    // ====== GRÁFICOS VISUALES ======
+    // Ventas por Hora
+    try {
+        const canvas1 = document.getElementById('chartVentasPorHora');
+        if (canvas1) {
+            const imgData1 = canvas1.toDataURL('image/png', 1.0);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('Ventas por Hora', margin, y);
+            y += lineHeight;
+            doc.addImage(imgData1, 'PNG', margin, y, pageWidth - margin * 2, 40);
+            y += 45;
+        }
+    } catch(e){}
+    // Tendencia Semanal
+    try {
+        const canvas2 = document.getElementById('chartTendenciaSemanal');
+        if (canvas2) {
+            const imgData2 = canvas2.toDataURL('image/png', 1.0);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('Tendencia Semanal', margin, y);
+            y += lineHeight;
+            doc.addImage(imgData2, 'PNG', margin, y, pageWidth - margin * 2, 40);
+            y += 45;
+        }
+    } catch(e){}
+    // Distribución de Ventas
+    try {
+        const canvas3 = document.getElementById('chartDistribucion');
+        if (canvas3) {
+            const imgData3 = canvas3.toDataURL('image/png', 1.0);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('Distribución de Ventas', margin, y);
+            y += lineHeight;
+            doc.addImage(imgData3, 'PNG', margin, y, pageWidth - margin * 2, 40);
+            y += 45;
+        }
+    } catch(e){}
+
+    // ====== PRODUCTOS VENDIDOS (TOTAL SEMANAL) ======
     doc.setFontSize(12);
     doc.setFont(undefined, 'bold');
     doc.text('PRODUCTOS VENDIDOS (TOTAL SEMANAL)', margin, y);
     y += lineHeight;
-    
     doc.setLineWidth(0.5);
     doc.line(margin, y, pageWidth - margin, y);
     y += lineHeight;
-    
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    
     let hayVentas = false;
     productos.forEach(producto => {
         const cantidad = datosDeLaSemana.estadisticas[producto.id] || 0;
@@ -834,58 +910,47 @@ function descargarReporte() {
             y += lineHeight;
         }
     });
-    
     if (!hayVentas) {
         doc.text('No hay ventas registradas', margin, y);
         y += lineHeight;
     }
-    
     y += 5;
-    
-    // Resumen de ventas
+
+    // ====== RESUMEN DE VENTAS SEMANAL ======
     if (y > 240) {
         doc.addPage();
         y = 20;
     }
-    
     doc.setFontSize(12);
     doc.setFont(undefined, 'bold');
     doc.text('RESUMEN DE VENTAS SEMANAL', margin, y);
     y += lineHeight;
-    
     doc.setLineWidth(0.5);
     doc.line(margin, y, pageWidth - margin, y);
     y += lineHeight + 3;
-    
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    
     doc.text('Ventas con Tarjeta:', margin, y);
     doc.text(`$${datosDeLaSemana.ventasTarjeta.toFixed(2)}`, pageWidth - margin - 30, y);
     y += lineHeight;
-    
     doc.text('Ventas en Efectivo:', margin, y);
     doc.text(`$${datosDeLaSemana.ventasEfectivo.toFixed(2)}`, pageWidth - margin - 30, y);
     y += lineHeight + 3;
-    
     doc.setLineWidth(0.5);
     doc.line(margin, y, pageWidth - margin, y);
     y += lineHeight;
-    
     doc.setFont(undefined, 'bold');
     doc.text('TOTAL DE LA SEMANA:', margin, y);
     doc.text(`$${datosDeLaSemana.ventasTotales.toFixed(2)}`, pageWidth - margin - 30, y);
     y += lineHeight;
-    
     doc.setFont(undefined, 'normal');
     doc.text('Transacciones:', margin, y);
     doc.text(`${datosDeLaSemana.numTransacciones}`, pageWidth - margin - 30, y);
     y += lineHeight + 10;
-    
+
     // ======== DETALLE POR DÍA ========
     doc.addPage();
     y = 20;
-    
     doc.setFontSize(14);
     doc.setFont(undefined, 'bold');
     doc.text('DETALLE DIARIO DE TRANSACCIONES', pageWidth / 2, y, { align: 'center' });
@@ -1038,6 +1103,24 @@ function actualizarVistaReporte() {
         year: 'numeric' 
     });
     document.getElementById('reporteFechaModal').textContent = textoFecha.charAt(0).toUpperCase() + textoFecha.slice(1);
+
+    // Llenar resumen diario (como en el PDF)
+    const resumenTarjeta = document.getElementById('resumenTarjeta');
+    const resumenEfectivo = document.getElementById('resumenEfectivo');
+    const resumenTotal = document.getElementById('resumenTotal');
+    const resumenTransacciones = document.getElementById('resumenTransacciones');
+
+    if (datosDelDia) {
+        resumenTarjeta.textContent = datosDelDia.ventasTarjeta?.toFixed(2) || '0.00';
+        resumenEfectivo.textContent = datosDelDia.ventasEfectivo?.toFixed(2) || '0.00';
+        resumenTotal.textContent = datosDelDia.ventasTotales?.toFixed(2) || '0.00';
+        resumenTransacciones.textContent = datosDelDia.numTransacciones || '0';
+    } else {
+        resumenTarjeta.textContent = '0.00';
+        resumenEfectivo.textContent = '0.00';
+        resumenTotal.textContent = '0.00';
+        resumenTransacciones.textContent = '0';
+    }
     
     // Cargar datos del día seleccionado
     const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
