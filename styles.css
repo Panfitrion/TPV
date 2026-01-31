@@ -1,3 +1,35 @@
+/* Mejoras de responsividad para el modal de reporte en iPad */
+@media (max-width: 1024px) {
+    .modal-content.modal-reporte-mejorado {
+        max-width: 98vw;
+        min-width: 0;
+        padding: 0;
+        border-radius: 18px;
+    }
+    .modal-header {
+        padding: 18px 10px;
+        font-size: 18px;
+        border-radius: 18px 18px 0 0;
+    }
+    .modal-body {
+        padding: 18px 8px;
+    }
+    .metricas-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .reporte-resumen {
+        padding: 14px;
+        font-size: 15px;
+    }
+    .reporte-seccion {
+        padding: 10px 0;
+    }
+    .reporte-tabs {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+}
 /* Pantalla de cobro en efectivo tipo full-screen */
 .pantalla-efectivo {
     position: fixed;
@@ -188,7 +220,7 @@ header h1 {
     background: #9ca3af;
 }
 
-/* Tabs de Categorías */
+/* Tabs de CategorÃ­as */
 .categorias-tabs {
     display: flex;
     gap: 10px;
@@ -309,7 +341,7 @@ header h1 {
     display: none;
 }
 
-/* Subcategoría */
+/* SubcategorÃ­a */
 .subcategoria-card {
     background: transparent;
     color: #333;
@@ -418,7 +450,7 @@ header h1 {
     letter-spacing: -0.3px;
 }
 
-/* Administración */
+/* AdministraciÃ³n */
 /* Operaciones */
 .operaciones {
     display: flex;
@@ -754,7 +786,7 @@ header h1 {
     display: none !important;
 }
 
-/* Estadísticas y Reporte */
+/* EstadÃ­sticas y Reporte */
 .reporte {
     background: #f8f9fa;
     padding: 20px;
@@ -1825,7 +1857,7 @@ header h1 {
     box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4);
 }
 
-/* Gestión de Categorías */
+/* GestiÃ³n de CategorÃ­as */
 .gestion-categorias {
     background: #f8f9fa;
     padding: 20px;
@@ -1921,7 +1953,7 @@ input[type="color"] {
     }
 }
 
-/* iPad Mini y dispositivos más pequeños */
+/* iPad Mini y dispositivos mÃ¡s pequeÃ±os */
 @media (max-width: 820px) {
     .container {
         padding: 20px;
@@ -1973,7 +2005,7 @@ input[type="color"] {
     }
 }
 
-/* Orientación Landscape para iPad */
+/* OrientaciÃ³n Landscape para iPad */
 @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
     .main-content {
         grid-template-columns: 1.8fr 1.2fr;
@@ -1984,9 +2016,9 @@ input[type="color"] {
     }
 }
 
-/* Mejoras táctiles generales */
+/* Mejoras tÃ¡ctiles generales */
 @media (hover: none) and (pointer: coarse) {
-    /* Dispositivos táctiles */
+    /* Dispositivos tÃ¡ctiles */
     .producto-card,
     .btn-pago,
     .btn-cantidad,
@@ -1997,7 +2029,7 @@ input[type="color"] {
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
     }
     
-    /* Aumentar área táctil mínima */
+    /* Aumentar Ã¡rea tÃ¡ctil mÃ­nima */
     .btn-cantidad {
         min-width: 44px;
         min-height: 44px;
@@ -2121,7 +2153,7 @@ input[type="color"] {
     }
 }
 
-/* Imágenes de billetes y monedas en el modal de efectivo */
+/* ImÃ¡genes de billetes y monedas en el modal de efectivo */
 .img-billete {
     display: block;
     width: 120px;
@@ -2230,5 +2262,551 @@ input[type="color"] {
         min-height: 40px !important;
         width: 40px !important;
         height: 40px !important;
+    }
+}
+/* =====================================================
+   MEJORAS DE REPORTES Y ANÁLISIS
+   ===================================================== */
+
+/* Modal de reporte mejorado */
+.modal-reporte-mejorado {
+    max-width: 1000px;
+    width: 95%;
+}
+
+/* Pestañas de navegación */
+.reporte-tabs {
+    display: flex;
+    gap: 5px;
+    margin: 20px 0;
+    border-bottom: 2px solid #e5e7eb;
+    flex-wrap: wrap;
+}
+
+.reporte-tab {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.reporte-tab:hover {
+    color: #1e3c72;
+    background: #f3f4f6;
+}
+
+.reporte-tab.active {
+    color: #1e3c72;
+    border-bottom-color: #1e3c72;
+    background: #f9fafb;
+}
+
+/* Contenido de pestañas */
+.reporte-tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.reporte-tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grid de métricas principales */
+.metricas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.metrica-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.metrica-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 60, 114, 0.1);
+    border-color: #1e3c72;
+}
+
+.metrica-icon {
+    font-size: 36px;
+    line-height: 1;
+}
+
+.metrica-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.metrica-label {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metrica-valor {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.metrica-valor-small {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.metrica-cambio {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.metrica-cambio.positivo {
+    color: #10b981;
+}
+
+.metrica-cambio.positivo::before {
+    content: '↑ ';
+}
+
+.metrica-cambio.negativo {
+    color: #ef4444;
+}
+
+.metrica-cambio.negativo::before {
+    content: '↓ ';
+}
+
+.metrica-cambio.neutral {
+    color: #6b7280;
+}
+
+.metrica-cambio.neutral::before {
+    content: '→ ';
+}
+
+/* Métodos de pago visual */
+.metodos-pago-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.metodo-pago-item {
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.metodo-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.metodo-barra {
+    height: 24px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.metodo-barra-fill {
+    height: 100%;
+    transition: width 0.6s ease;
+    border-radius: 12px;
+}
+
+.metodo-barra-fill.tarjeta {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.metodo-barra-fill.efectivo {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.metodo-porcentaje {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+/* Top productos */
+.top-productos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.top-producto-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.top-producto-item:hover {
+    border-color: #1e3c72;
+    transform: translateX(5px);
+}
+
+.top-producto-posicion {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e3c72;
+    min-width: 30px;
+    text-align: center;
+}
+
+.top-producto-info {
+    flex: 1;
+}
+
+.top-producto-nombre {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.top-producto-barra {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.top-producto-barra-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.top-producto-cantidad {
+    font-weight: 700;
+    color: #1e3c72;
+    min-width: 80px;
+    text-align: right;
+}
+
+/* Gráficos */
+canvas {
+    max-height: 350px !important;
+    margin: 15px 0;
+}
+
+/* Comparativa */
+.comparativa-selector {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.comparativa-selector label {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.comparativa-selector select {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.comparativa-selector select:focus {
+    outline: none;
+    border-color: #1e3c72;
+}
+
+.comparativa-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.comparativa-item {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+}
+
+.comparativa-item h5 {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.comparativa-valores {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.comparativa-hoy {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.comparativa-anterior {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.comparativa-diferencia {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.comparativa-diferencia.positivo {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.comparativa-diferencia.negativo {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.comparativa-diferencia.neutral {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Historial de transacciones */
+.historial-transacciones {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.transaccion-detalle-item {
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+}
+
+.transaccion-detalle-item:hover {
+    border-color: #1e3c72;
+    box-shadow: 0 2px 8px rgba(30, 60, 114, 0.1);
+}
+
+.transaccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.transaccion-hora {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.transaccion-total {
+    font-size: 18px;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.transaccion-items {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.transaccion-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Alertas del reporte */
+.alertas-reporte {
+    margin: 20px 0;
+}
+
+.alerta-item {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideInLeft 0.4s ease;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.alerta-item.info {
+    background: #dbeafe;
+    border-left: 4px solid #3b82f6;
+    color: #1e40af;
+}
+
+.alerta-item.warning {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    color: #92400e;
+}
+
+.alerta-item.success {
+    background: #d1fae5;
+    border-left: 4px solid #10b981;
+    color: #065f46;
+}
+
+.alerta-item.error {
+    background: #fee2e2;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+}
+
+.alerta-icon {
+    font-size: 24px;
+}
+
+.alerta-texto {
+    flex: 1;
+    font-weight: 600;
+}
+
+/* Productos detallados */
+.reporte-productos-detallado {
+    max-height: 400px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.producto-detalle-card {
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.producto-detalle-card:hover {
+    border-color: #1e3c72;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 60, 114, 0.1);
+}
+
+.producto-detalle-nombre {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.producto-detalle-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+}
+
+.producto-detalle-stat {
+    display: flex;
+    justify-content: space-between;
+    color: #6b7280;
+}
+
+.producto-detalle-stat strong {
+    color: #1f2937;
+}
+
+/* Responsive para tablets */
+@media (max-width: 1024px) {
+    .modal-reporte-mejorado {
+        width: 98%;
+        max-width: none;
+    }
+    
+    .metricas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .reporte-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .reporte-tab {
+        font-size: 13px;
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 640px) {
+    .metricas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .comparativa-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .reporte-productos-detallado {
+        grid-template-columns: 1fr;
     }
 }
