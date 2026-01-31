@@ -2,10 +2,10 @@
 function mostrarNotificacion(mensaje, tipo = 'info') {
     // Intentar usar la API de Notificaciones del navegador
     if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('TPV - Panadería', {
+        new Notification('TPV - PanaderÃ­a', {
             body: mensaje,
-            icon: tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : 'ℹ️',
-            badge: '🥖',
+            icon: tipo === 'success' ? 'âœ…' : tipo === 'error' ? 'âŒ' : 'â„¹ï¸',
+            badge: 'ðŸ¥–',
             requireInteraction: false,
             silent: true
         });
@@ -13,16 +13,16 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
 }
 
 
-// Productos de la panadería organizados por categorías
+// Productos de la panaderÃ­a organizados por categorÃ­as
 const categorias = {};
 
-// Metadatos de categorías (nombres y colores)
+// Metadatos de categorÃ­as (nombres y colores)
 let categoriasInfo = {};
 
 // Array plano de todos los productos
 const productos = [];
 
-// Estado de la aplicación
+// Estado de la aplicaciÃ³n
 let carrito = [];
 let metodoPago = null;
 let estadisticas = {};
@@ -30,16 +30,16 @@ let ventasTotales = 0;
 let ventasTarjeta = 0;
 let ventasEfectivo = 0;
 let numTransacciones = 0;
-let fechaReporteVisualizando = new Date(); // Fecha que se está visualizando en el reporte
+let fechaReporteVisualizando = new Date(); // Fecha que se estÃ¡ visualizando en el reporte
 
-// Función para obtener el lunes de una fecha dada
+// FunciÃ³n para obtener el lunes de una fecha dada
 function obtenerLunesDeLaSemana(fecha) {
     const dia = fecha.getDay();
     const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1); // Ajustar cuando es domingo
     return new Date(fecha.setDate(diff));
 }
 
-// Función para obtener el sábado de una semana que comienza en lunes dado
+// FunciÃ³n para obtener el sÃ¡bado de una semana que comienza en lunes dado
 function obtenerSabadoDeLaSemana(lunes) {
     const sabado = new Date(lunes);
     sabado.setDate(sabado.getDate() + 5);
@@ -47,35 +47,35 @@ function obtenerSabadoDeLaSemana(lunes) {
 }
 let retiros = []; // Array para almacenar los retiros de efectivo
 let transacciones = []; // Array para almacenar el historial detallado de transacciones
-let categoriaActiva = null; // Categoría actualmente seleccionada
+let categoriaActiva = null; // CategorÃ­a actualmente seleccionada
 let modoReordenar = false; // Estado del modo reordenar
-let elementoArrastrado = null; // Elemento que se está arrastrando
+let elementoArrastrado = null; // Elemento que se estÃ¡ arrastrando
 
-// Operaciones rápidas configurables
+// Operaciones rÃ¡pidas configurables
 let operacionesRetiro = [
-    { id: 1, emoji: '🗑️', nombre: 'Basura' },
-    { id: 2, emoji: '⛽', nombre: 'Gas' },
-    { id: 3, emoji: '📦', nombre: 'Suministros' },
-    { id: 4, emoji: '🔧', nombre: 'Mantenimiento' },
-    { id: 5, emoji: '🚚', nombre: 'Proveedor' },
-    { id: 6, emoji: '💡', nombre: 'Servicios' }
+    { id: 1, emoji: 'ðŸ—‘ï¸', nombre: 'Basura' },
+    { id: 2, emoji: 'â›½', nombre: 'Gas' },
+    { id: 3, emoji: 'ðŸ“¦', nombre: 'Suministros' },
+    { id: 4, emoji: 'ðŸ”§', nombre: 'Mantenimiento' },
+    { id: 5, emoji: 'ðŸšš', nombre: 'Proveedor' },
+    { id: 6, emoji: 'ðŸ’¡', nombre: 'Servicios' }
 ];
 
 let operacionesIngreso = [
-    { id: 1, emoji: '💰', nombre: 'Préstamo' },
-    { id: 2, emoji: '🎁', nombre: 'Propina' },
-    { id: 3, emoji: '↩️', nombre: 'Devolución' },
-    { id: 4, emoji: '⚖️', nombre: 'Ajuste' },
-    { id: 5, emoji: '💵', nombre: 'Fondo Caja' },
-    { id: 6, emoji: '📝', nombre: 'Otros' }
+    { id: 1, emoji: 'ðŸ’°', nombre: 'PrÃ©stamo' },
+    { id: 2, emoji: 'ðŸŽ', nombre: 'Propina' },
+    { id: 3, emoji: 'â†©ï¸', nombre: 'DevoluciÃ³n' },
+    { id: 4, emoji: 'âš–ï¸', nombre: 'Ajuste' },
+    { id: 5, emoji: 'ðŸ’µ', nombre: 'Fondo Caja' },
+    { id: 6, emoji: 'ðŸ“', nombre: 'Otros' }
 ];
 
-// Inicializar estadísticas
+// Inicializar estadÃ­sticas
 productos.forEach(producto => {
     estadisticas[producto.id] = 0;
 });
 
-// Inicializar la aplicación
+// Inicializar la aplicaciÃ³n
 document.addEventListener('DOMContentLoaded', () => {
     mostrarFecha();
     cargarDatosLocalStorage(); // Cargar primero los datos guardados
@@ -92,12 +92,12 @@ function mostrarFecha() {
     document.getElementById('fecha').textContent = fecha.toLocaleDateString('es-ES', opciones);
 }
 
-// Renderizar productos por categorías
+// Renderizar productos por categorÃ­as
 function renderizarProductos() {
     const tabsContainer = document.getElementById('categoriasTabs');
     const grid = document.getElementById('productosGrid');
     
-    // Renderizar pestañas de categorías
+    // Renderizar pestaÃ±as de categorÃ­as
     tabsContainer.innerHTML = '';
     
     const categoriasConProductos = Object.keys(categorias).filter(key => 
@@ -109,12 +109,12 @@ function renderizarProductos() {
         return;
     }
     
-    // Si no hay categoría activa, seleccionar la primera
+    // Si no hay categorÃ­a activa, seleccionar la primera
     if (!categoriaActiva || !categorias[categoriaActiva] || categorias[categoriaActiva].length === 0) {
         categoriaActiva = categoriasConProductos[0];
     }
     
-    // Crear pestañas
+    // Crear pestaÃ±as
     categoriasConProductos.forEach(categoriaKey => {
         const tab = document.createElement('button');
         tab.className = 'categoria-tab';
@@ -128,10 +128,10 @@ function renderizarProductos() {
         tabsContainer.appendChild(tab);
     });
     
-    // Renderizar productos de la categoría activa
+    // Renderizar productos de la categorÃ­a activa
     grid.innerHTML = '';
     
-    // Mostrar mensaje si está en modo reordenar
+    // Mostrar mensaje si estÃ¡ en modo reordenar
     if (modoReordenar) {
         const mensaje = document.createElement('div');
         mensaje.style.cssText = `
@@ -143,10 +143,10 @@ function renderizarProductos() {
             text-align: center;
             font-weight: 600;
         `;
-        mensaje.textContent = '🔀 Modo Reordenar Activo - Arrastra los productos para cambiar su orden';
+        mensaje.textContent = 'ðŸ”€ Modo Reordenar Activo - Arrastra los productos para cambiar su orden';
         grid.appendChild(mensaje);
         
-        // Botón para agregar separador
+        // BotÃ³n para agregar separador
         const btnAgregarSeparador = document.createElement('button');
         btnAgregarSeparador.className = 'btn-agregar-separador';
         btnAgregarSeparador.textContent = '+ Agregar Separador';
@@ -181,7 +181,7 @@ function renderizarProductos() {
     categorias[categoriaActiva].forEach((producto, index) => {
         const card = document.createElement('div');
         
-        // Si es subcategoría, renderizar como separador
+        // Si es subcategorÃ­a, renderizar como separador
         if (producto.esSubcategoria) {
             card.className = 'subcategoria-card';
             
@@ -190,9 +190,9 @@ function renderizarProductos() {
                 card.innerHTML = `
                     <div class="subcategoria-nombre">${producto.nombre}</div>
                     <div class="reorder-buttons">
-                        <button class="btn-reorder" onclick="moverProducto(${index}, -1)">⬆️</button>
-                        <button class="btn-reorder" onclick="moverProducto(${index}, 1)">⬇️</button>
-                        <button class="btn-reorder btn-delete" onclick="eliminarSeparador(${producto.id})">🗑️</button>
+                        <button class="btn-reorder" onclick="moverProducto(${index}, -1)">â¬†ï¸</button>
+                        <button class="btn-reorder" onclick="moverProducto(${index}, 1)">â¬‡ï¸</button>
+                        <button class="btn-reorder btn-delete" onclick="eliminarSeparador(${producto.id})">ðŸ—‘ï¸</button>
                     </div>
                 `;
                 card.style.padding = '15px';
@@ -206,13 +206,13 @@ function renderizarProductos() {
             card.className = 'producto-card';
             card.style.background = `linear-gradient(135deg, ${categoriasInfo[categoriaActiva]?.color || '#666'} 0%, ${categoriasInfo[categoriaActiva]?.color || '#666'}dd 100%)`;
             
-            // Si está en modo reordenar, agregar botones
+            // Si estÃ¡ en modo reordenar, agregar botones
             if (modoReordenar) {
                 card.innerHTML = `
                     <div class="nombre">${producto.nombre}</div>
                     <div class="reorder-buttons">
-                        <button class="btn-reorder" onclick="moverProducto(${index}, -1)">⬆️</button>
-                        <button class="btn-reorder" onclick="moverProducto(${index}, 1)">⬇️</button>
+                        <button class="btn-reorder" onclick="moverProducto(${index}, -1)">â¬†ï¸</button>
+                        <button class="btn-reorder" onclick="moverProducto(${index}, 1)">â¬‡ï¸</button>
                     </div>
                 `;
             } else {
@@ -229,10 +229,10 @@ function renderizarProductos() {
     
     grid.appendChild(productosGrid);
     
-    console.log('🎨 Productos renderizados - Categoría:', categoriaActiva);
+    console.log('ðŸŽ¨ Productos renderizados - CategorÃ­a:', categoriaActiva);
 }
 
-// Cambiar categoría activa
+// Cambiar categorÃ­a activa
 function cambiarCategoria(categoriaKey) {
     categoriaActiva = categoriaKey;
     renderizarProductos();
@@ -266,7 +266,7 @@ function renderizarCarrito() {
     const carritoItems = document.getElementById('carritoItems');
     
     if (carrito.length === 0) {
-        carritoItems.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Carrito vacío</p>';
+        carritoItems.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Carrito vacÃ­o</p>';
         return;
     }
     
@@ -321,14 +321,14 @@ function limpiarCarrito() {
     calcularTotal();
 }
 
-// Seleccionar método de pago e iniciar proceso automáticamente
+// Seleccionar mÃ©todo de pago e iniciar proceso automÃ¡ticamente
 // Pantalla de cobro en efectivo (full-screen)
 let pantallaEfectivoMonto = 0;
 let pantallaEfectivoTotal = 0;
 
 function seleccionarMetodo(metodo) {
     if (carrito.length === 0) {
-        mostrarNotificacion('El carrito está vacío', 'error');
+        mostrarNotificacion('El carrito estÃ¡ vacÃ­o', 'error');
         return;
     }
     
@@ -338,9 +338,9 @@ function seleccionarMetodo(metodo) {
     if (metodo === 'efectivo') {
         mostrarPantallaEfectivo(total);
     } else if (metodo === 'tarjeta') {
-        // Pago con tarjeta - registro directo sin confirmación
+        // Pago con tarjeta - registro directo sin confirmaciÃ³n
         registrarVenta(total);
-        mostrarNotificacion('✅ Venta registrada correctamente', 'success');
+        mostrarNotificacion('âœ… Venta registrada correctamente', 'success');
     }
 }
 
@@ -375,17 +375,17 @@ function pantallaEfectivoConfirmar() {
         return;
     }
     registrarVenta(pantallaEfectivoTotal, pantallaEfectivoMonto);
-    mostrarNotificacion('✅ Venta en efectivo registrada', 'success');
+    mostrarNotificacion('âœ… Venta en efectivo registrada', 'success');
     pantallaEfectivoCancelar();
 }
 
-// Agregar denominación al monto recibido
+// Agregar denominaciÃ³n al monto recibido
 // Escuchar mensaje de venta exitosa desde la ventana de efectivo
 window.addEventListener('message', function(event) {
     if (event.data && event.data.tipo === 'ventaEfectivoExitosa') {
         limpiarCarrito();
-        mostrarNotificacion('✅ Venta en efectivo registrada', 'success');
-        // Aquí puedes agregar lógica para regresar a la pantalla principal si hay navegación
+        mostrarNotificacion('âœ… Venta en efectivo registrada', 'success');
+        // AquÃ­ puedes agregar lÃ³gica para regresar a la pantalla principal si hay navegaciÃ³n
     }
 });
 function agregarDenominacion(valor) {
@@ -403,7 +403,7 @@ function resetearMonto() {
     document.getElementById('montoRecibido').value = '0';
     document.getElementById('montoRecibidoDisplay').textContent = '0.00';
     
-    // Limpiar también el cambio
+    // Limpiar tambiÃ©n el cambio
     const cambioDisplay = document.getElementById('cambioDisplay');
     if (cambioDisplay) {
         cambioDisplay.textContent = '0.00';
@@ -425,7 +425,7 @@ function cerrarModalEfectivo() {
     document.getElementById('modalEfectivo').classList.add('hidden');
         resetearMonto();
     
-    // Asegurar que todo esté limpio
+    // Asegurar que todo estÃ© limpio
     const cambioDisplay = document.getElementById('cambioDisplay');
     if (cambioDisplay) {
         cambioDisplay.textContent = '0.00';
@@ -457,7 +457,7 @@ function confirmarPagoEfectivo() {
     document.getElementById('cambioMonto').textContent = cambio.toFixed(2);
     document.getElementById('modalCambio').classList.remove('hidden');
     
-    // Auto-cerrar después de 3 segundos
+    // Auto-cerrar despuÃ©s de 3 segundos
     setTimeout(() => {
         cerrarModalCambio();
     }, 3000);
@@ -468,7 +468,7 @@ function cerrarModalCambio() {
     document.getElementById('modalCambio').classList.add('hidden');
 }
 
-// Calcular cambio (para visualización en modal)
+// Calcular cambio (para visualizaciÃ³n en modal)
 function calcularCambio() {
     const total = parseFloat(document.getElementById('totalCarrito').textContent) || parseFloat(document.getElementById('totalAPagar')?.textContent?.replace('$', ''));
     const input = document.getElementById('montoRecibido');
@@ -497,7 +497,7 @@ function calcularCambio() {
 
 // Registrar venta
 function registrarVenta(total, montoRecibido = null) {
-    // Crear registro detallado de la transacción
+    // Crear registro detallado de la transacciÃ³n
     const transaccion = {
         id: Date.now(),
         fecha: new Date().toISOString(),
@@ -508,10 +508,10 @@ function registrarVenta(total, montoRecibido = null) {
         cambio: montoRecibido ? (montoRecibido - total) : 0
     };
     
-    // Agregar transacción al historial
+    // Agregar transacciÃ³n al historial
     transacciones.push(transaccion);
     
-    // Actualizar estadísticas
+    // Actualizar estadÃ­sticas
     carrito.forEach(item => {
         estadisticas[item.id] += item.cantidad;
     });
@@ -519,7 +519,7 @@ function registrarVenta(total, montoRecibido = null) {
     ventasTotales += total;
     numTransacciones++;
     
-    // Registrar por método de pago
+    // Registrar por mÃ©todo de pago
     if (metodoPago === 'efectivo') {
         ventasEfectivo += total;
     } else if (metodoPago === 'tarjeta') {
@@ -536,13 +536,13 @@ function registrarVenta(total, montoRecibido = null) {
     
     metodoPago = null;
     
-    // Actualizar estadísticas en pantalla
+    // Actualizar estadÃ­sticas en pantalla
     actualizarEstadisticas();
 }
 
-// Actualizar estadísticas
+// Actualizar estadÃ­sticas
 function actualizarEstadisticas() {
-    // Esta función se mantiene por compatibilidad
+    // Esta funciÃ³n se mantiene por compatibilidad
     // Los datos se muestran cuando se abre el modal de reporte
 }
 
@@ -563,15 +563,15 @@ function guardarDatosLocalStorage() {
     };
     
     try {
-        // Guardar datos del día actual
+        // Guardar datos del dÃ­a actual
         localStorage.setItem('panaderiaDatos', JSON.stringify(datos));
         
-        // Guardar también en histórico por fecha
+        // Guardar tambiÃ©n en histÃ³rico por fecha
         const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
         historico[fechaKey] = datos;
         localStorage.setItem('panaderiaHistorico', JSON.stringify(historico));
         
-        // Guardar catálogo (productos y categorías) en clave separada para mayor robustez
+        // Guardar catÃ¡logo (productos y categorÃ­as) en clave separada para mayor robustez
         try {
             const catalogo = {
                 categorias: datos.categorias,
@@ -583,9 +583,9 @@ function guardarDatosLocalStorage() {
             console.warn('No se pudo guardar panaderiaCatalogo:', errCat);
         }
         
-        console.log('✅ Datos guardados correctamente:', datos);
+        console.log('âœ… Datos guardados correctamente:', datos);
     } catch (error) {
-        console.error('❌ Error al guardar datos:', error);
+        console.error('âŒ Error al guardar datos:', error);
         mostrarNotificacion('Error al guardar los datos. Por favor verifica el espacio disponible.', 'error');
     }
 }
@@ -597,13 +597,13 @@ function cargarDatosLocalStorage() {
         if (catalogoGuardado) {
             try {
                 const catalogo = JSON.parse(catalogoGuardado);
-                // Cargar categorías y productos desde catálogo persistente
+                // Cargar categorÃ­as y productos desde catÃ¡logo persistente
                 if (catalogo.categorias) {
                     Object.keys(categorias).forEach(cat => { categorias[cat] = []; });
                     Object.keys(catalogo.categorias).forEach(cat => { categorias[cat] = catalogo.categorias[cat]; });
                     productos.length = 0;
                     Object.keys(categorias).forEach(cat => { if (categorias[cat] && categorias[cat].length > 0) productos.push(...categorias[cat]); });
-                    console.log('📦 Catálogo cargado desde panaderiaCatalogo:', productos.length);
+                    console.log('ðŸ“¦ CatÃ¡logo cargado desde panaderiaCatalogo:', productos.length);
                 }
 
                 if (catalogo.categoriasInfo) {
@@ -620,15 +620,15 @@ function cargarDatosLocalStorage() {
             const datos = JSON.parse(datosGuardados);
             const fechaHoy = new Date().toDateString();
             
-            console.log('📦 Datos encontrados en localStorage:', datos);
-            // Cargar categorías y productos siempre (el catálogo debe persistir)
+            console.log('ðŸ“¦ Datos encontrados en localStorage:', datos);
+            // Cargar categorÃ­as y productos siempre (el catÃ¡logo debe persistir)
             if (datos.categorias) {
-                // Limpiar categorías existentes primero
+                // Limpiar categorÃ­as existentes primero
                 Object.keys(categorias).forEach(cat => {
                     categorias[cat] = [];
                 });
 
-                // Cargar categorías guardadas
+                // Cargar categorÃ­as guardadas
                 Object.keys(datos.categorias).forEach(cat => {
                     categorias[cat] = datos.categorias[cat];
                 });
@@ -641,15 +641,15 @@ function cargarDatosLocalStorage() {
                     }
                 });
 
-                console.log('📦 Productos cargados:', productos.length);
+                console.log('ðŸ“¦ Productos cargados:', productos.length);
             }
 
-            // Cargar info de categorías si existe
+            // Cargar info de categorÃ­as si existe
             if (datos.categoriasInfo) {
                 categoriasInfo = datos.categoriasInfo;
             }
 
-            // Si los datos son del mismo día, cargar estadísticas y ventas
+            // Si los datos son del mismo dÃ­a, cargar estadÃ­sticas y ventas
             if (datos.fecha === fechaHoy) {
                 estadisticas = datos.estadisticas || {};
                 ventasTotales = datos.ventasTotales || 0;
@@ -659,16 +659,16 @@ function cargarDatosLocalStorage() {
                 retiros = datos.retiros || [];
                 transacciones = datos.transacciones || [];
 
-                // Asegurar que todos los productos tengan estadísticas
+                // Asegurar que todos los productos tengan estadÃ­sticas
                 productos.forEach(producto => {
                     if (estadisticas[producto.id] === undefined) {
                         estadisticas[producto.id] = 0;
                     }
                 });
 
-                console.log('✅ Datos del día actual cargados correctamente');
+                console.log('âœ… Datos del dÃ­a actual cargados correctamente');
             } else {
-                // Si no son del mismo día, mantener catálogo y reiniciar métricas diarias
+                // Si no son del mismo dÃ­a, mantener catÃ¡logo y reiniciar mÃ©tricas diarias
                 estadisticas = estadisticas || {};
                 ventasTotales = 0;
                 ventasTarjeta = 0;
@@ -684,14 +684,14 @@ function cargarDatosLocalStorage() {
                     }
                 });
 
-                console.log('📅 Los datos son de otro día — catálogo cargado, métricas diarias reiniciadas');
+                console.log('ðŸ“… Los datos son de otro dÃ­a â€” catÃ¡logo cargado, mÃ©tricas diarias reiniciadas');
             }
         } else {
-            console.log('📝 No hay datos guardados, comenzando nuevo día');
+            console.log('ðŸ“ No hay datos guardados, comenzando nuevo dÃ­a');
         }
     } catch (error) {
-        console.error('❌ Error al cargar datos:', error);
-        mostrarNotificacion('Error al cargar los datos guardados. Se iniciará con datos vacíos.', 'error');
+        console.error('âŒ Error al cargar datos:', error);
+        mostrarNotificacion('Error al cargar los datos guardados. Se iniciarÃ¡ con datos vacÃ­os.', 'error');
     }
 }
 
@@ -762,7 +762,8 @@ function descargarReporte() {
             ventasEfectivo: datosDia.ventasEfectivo || 0,
             numTransacciones: datosDia.numTransacciones || 0,
             estadisticas: datosDia.estadisticas || {},
-            transacciones: datosDia.transacciones || []
+            transacciones: datosDia.transacciones || [],
+            retiros: datosDia.retiros || []
         });
         
         // Acumular datos
@@ -809,7 +810,7 @@ function descargarReporte() {
     // Productos vendidos
     doc.setFontSize(12);
     doc.setFont(undefined, 'bold');
-    doc.text('PRODUCTOS VENDIDOS', margin, y);
+    doc.text('PRODUCTOS VENDIDOS (TOTAL SEMANAL)', margin, y);
     y += lineHeight;
     
     doc.setLineWidth(0.5);
@@ -849,7 +850,7 @@ function descargarReporte() {
     
     doc.setFontSize(12);
     doc.setFont(undefined, 'bold');
-    doc.text('RESUMEN DE VENTAS', margin, y);
+    doc.text('RESUMEN DE VENTAS SEMANAL', margin, y);
     y += lineHeight;
     
     doc.setLineWidth(0.5);
@@ -879,48 +880,136 @@ function descargarReporte() {
     doc.setFont(undefined, 'normal');
     doc.text('Transacciones:', margin, y);
     doc.text(`${datosDeLaSemana.numTransacciones}`, pageWidth - margin - 30, y);
-    y += lineHeight + 5;
+    y += lineHeight + 10;
     
-    // Retiros de efectivo
-    if (datosDeLaSemana.retiros.length > 0) {
-        if (y > 230) {
+    // ======== DETALLE POR DÍA ========
+    doc.addPage();
+    y = 20;
+    
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('DETALLE DIARIO DE TRANSACCIONES', pageWidth / 2, y, { align: 'center' });
+    y += 12;
+    
+    detallePorDia.forEach((dia, index) => {
+        // Verificar si el día tiene transacciones
+        if (dia.numTransacciones === 0 && (!dia.retiros || dia.retiros.length === 0)) {
+            return; // Saltar días sin actividad
+        }
+        
+        // Encabezado del día
+        if (y > 250) {
             doc.addPage();
             y = 20;
         }
+        
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
-        doc.text('RETIROS DE EFECTIVO', margin, y);
+        const nombreDia = dia.fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+        doc.text(nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1), margin, y);
         y += lineHeight;
+        
         doc.setLineWidth(0.5);
         doc.line(margin, y, pageWidth - margin, y);
-        y += lineHeight + 3;
-        doc.setFontSize(10);
+        y += lineHeight;
+        
+        // Resumen del día
+        doc.setFontSize(9);
         doc.setFont(undefined, 'normal');
-        datosDeLaSemana.retiros.forEach(retiro => {
-            if (y > 270) {
+        doc.text(`Total: $${dia.ventasTotales.toFixed(2)} | Tarjeta: $${dia.ventasTarjeta.toFixed(2)} | Efectivo: $${dia.ventasEfectivo.toFixed(2)} | Transacciones: ${dia.numTransacciones}`, margin, y);
+        y += lineHeight + 2;
+        
+        // Transacciones del día
+        if (dia.transacciones && dia.transacciones.length > 0) {
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(10);
+            doc.text('Ventas:', margin, y);
+            y += lineHeight;
+            
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(8);
+            
+            dia.transacciones.forEach((trans, idx) => {
+                if (y > 275) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                const hora = new Date(trans.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                const metodo = trans.metodoPago === 'tarjeta' ? '💳' : '💵';
+                
+                // Línea de transacción
+                doc.text(`${idx + 1}. ${hora} ${metodo} - $${trans.total.toFixed(2)}`, margin + 3, y);
+                y += lineHeight - 1;
+                
+                // Items de la transacción
+                if (trans.items && trans.items.length > 0) {
+                    trans.items.forEach(item => {
+                        if (y > 275) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                        doc.setFontSize(7);
+                        doc.setTextColor(100);
+                        doc.text(`   • ${item.cantidad}x ${item.nombre} ($${(item.precio * item.cantidad).toFixed(2)})`, margin + 6, y);
+                        doc.setTextColor(0);
+                        doc.setFontSize(8);
+                        y += lineHeight - 2;
+                    });
+                }
+                
+                y += 1;
+            });
+            
+            y += 3;
+        }
+        
+        // Retiros del día
+        if (dia.retiros && dia.retiros.length > 0) {
+            if (y > 260) {
                 doc.addPage();
                 y = 20;
             }
-            const fechaRetiro = new Date(retiro.fecha);
-            const horaRetiro = fechaRetiro.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            const diaRetiro = fechaRetiro.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
-            doc.text(`${diaRetiro} ${horaRetiro}`, margin, y);
-            doc.text(`-$${retiro.monto.toFixed(2)}`, pageWidth - margin - 30, y);
+            
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(10);
+            doc.text('Retiros:', margin, y);
             y += lineHeight;
-            const maxWidth = pageWidth - 2 * margin;
-            const lines = doc.splitTextToSize(`   ${retiro.justificacion}`, maxWidth);
-            doc.text(lines, margin, y);
-            y += lineHeight * lines.length + 3;
-        });
-    }
+            
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(8);
+            
+            dia.retiros.forEach((retiro, idx) => {
+                if (y > 275) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                const hora = new Date(retiro.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                doc.text(`${idx + 1}. ${hora} - $${retiro.monto.toFixed(2)}`, margin + 3, y);
+                y += lineHeight - 1;
+                
+                doc.setFontSize(7);
+                doc.setTextColor(100);
+                const maxWidth = pageWidth - 2 * margin - 6;
+                const lines = doc.splitTextToSize(`   ${retiro.justificacion}`, maxWidth);
+                doc.text(lines, margin + 6, y);
+                y += lineHeight - 2 * (lines.length);
+                doc.setTextColor(0);
+                doc.setFontSize(8);
+                y += 2;
+            });
+            
+            y += 3;
+        }
+        
+        y += 5; // Espacio entre días
+    });
+    
     // Descargar PDF
     const nombreArchivo = `reporte-semanal-${lunesDeLaSemana.getFullYear()}-${(lunesDeLaSemana.getMonth()+1).toString().padStart(2,'0')}-${lunesDeLaSemana.getDate().toString().padStart(2,'0')}.pdf`;
     doc.save(nombreArchivo);
 }
-
-// ========== MODALES REPORTE Y PRODUCTOS ==========
-
-// Modal Reporte
 function abrirModalReporte() {
     fechaReporteVisualizando = new Date(); // Resetear a hoy
     actualizarVistaReporte();
@@ -931,85 +1020,54 @@ function cerrarModalReporte() {
     document.getElementById('modalReporte').classList.add('hidden');
 }
 
-function cambiarDiaReporte(semanas) {
-    // Cambiar por semanas (7 días por semana)
-    fechaReporteVisualizando.setDate(fechaReporteVisualizando.getDate() + (semanas * 7));
+function cambiarDiaReporte(dias) {
+    // Cambiar por días
+    fechaReporteVisualizando.setDate(fechaReporteVisualizando.getDate() + dias);
     actualizarVistaReporte();
 }
 
 function actualizarVistaReporte() {
-    // Calcular el lunes y sábado de la semana
-    const lunesDeLaSemana = obtenerLunesDeLaSemana(new Date(fechaReporteVisualizando));
-    const sabadoDeLaSemana = obtenerSabadoDeLaSemana(new Date(lunesDeLaSemana));
+    // Mostrar datos del día seleccionado
+    const fechaSeleccionada = new Date(fechaReporteVisualizando);
     
-    // Mostrar el rango de la semana
-    const textoFecha = `Semana del ${lunesDeLaSemana.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })} al ${sabadoDeLaSemana.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-    document.getElementById('reporteFechaModal').textContent = textoFecha;
+    // Mostrar la fecha del día
+    const textoFecha = fechaSeleccionada.toLocaleDateString('es-ES', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+    });
+    document.getElementById('reporteFechaModal').textContent = textoFecha.charAt(0).toUpperCase() + textoFecha.slice(1);
     
-    // Cargar datos de toda la semana (lunes a sábado)
+    // Cargar datos del día seleccionado
     const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
     const hoy = new Date().toDateString();
+    const fechaKey = fechaSeleccionada.toDateString();
     
-    // Inicializar datos acumulados de la semana
-    let datosDeLaSemana = {
-        estadisticas: {},
-        ventasTotales: 0,
-        ventasTarjeta: 0,
-        ventasEfectivo: 0,
-        numTransacciones: 0,
-        retiros: [],
-        transacciones: []
-    };
-    
-    // Iterar desde lunes hasta sábado
-    for (let i = 0; i < 6; i++) {
-        const fechaActual = new Date(lunesDeLaSemana);
-        fechaActual.setDate(fechaActual.getDate() + i);
-        const fechaKey = fechaActual.toDateString();
-        
-        let datosDia;
-        if (fechaKey === hoy) {
-            // Si es hoy, usar datos actuales
-            datosDia = {
-                estadisticas,
-                ventasTotales,
-                ventasTarjeta,
-                ventasEfectivo,
-                numTransacciones,
-                retiros,
-                transacciones
-            };
-        } else {
-            // Si es otro día, buscar en histórico
-            datosDia = historico[fechaKey] || {
-                estadisticas: {},
-                ventasTotales: 0,
-                ventasTarjeta: 0,
-                ventasEfectivo: 0,
-                numTransacciones: 0,
-                retiros: [],
-                transacciones: []
-            };
-        }
-        
-        // Acumular datos
-        datosDeLaSemana.ventasTotales += datosDia.ventasTotales;
-        datosDeLaSemana.ventasTarjeta += datosDia.ventasTarjeta;
-        datosDeLaSemana.ventasEfectivo += datosDia.ventasEfectivo;
-        datosDeLaSemana.numTransacciones += datosDia.numTransacciones;
-        datosDeLaSemana.retiros = datosDeLaSemana.retiros.concat(datosDia.retiros || []);
-        datosDeLaSemana.transacciones = datosDeLaSemana.transacciones.concat(datosDia.transacciones || []);
-        
-        // Acumular estadísticas de productos
-        Object.keys(datosDia.estadisticas).forEach(productoId => {
-            if (!datosDeLaSemana.estadisticas[productoId]) {
-                datosDeLaSemana.estadisticas[productoId] = 0;
-            }
-            datosDeLaSemana.estadisticas[productoId] += datosDia.estadisticas[productoId];
-        });
+    let datosDelDia;
+    if (fechaKey === hoy) {
+        // Si es hoy, usar datos actuales
+        datosDelDia = {
+            estadisticas,
+            ventasTotales,
+            ventasTarjeta,
+            ventasEfectivo,
+            numTransacciones,
+            retiros,
+            transacciones
+        };
+    } else {
+        // Si es otro día, buscar en histórico
+        datosDelDia = historico[fechaKey] || {
+            estadisticas: {},
+            ventasTotales: 0,
+            ventasTarjeta: 0,
+            ventasEfectivo: 0,
+            numTransacciones: 0,
+            retiros: [],
+            transacciones: []
+        };
     }
-    
-    const datosDelDia = datosDeLaSemana;
     
     // Actualizar productos vendidos (solo cantidad)
     const reporteProductos = document.getElementById('reporteProductos');
@@ -1072,8 +1130,6 @@ function actualizarVistaReporte() {
         reporteRetiros.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay retiros registrados en esta fecha</p>';
     }
 }
-
-// Modal Productos
 function abrirModalProductos() {
     renderizarListaProductos();
     document.getElementById('modalProductos').classList.remove('hidden');
@@ -1107,8 +1163,8 @@ function renderizarListaProductos() {
                     <span class="producto-admin-precio">$${producto.precio.toFixed(2)}</span>
                 </div>
                 <div class="producto-admin-acciones">
-                    <button class="btn-editar" onclick="editarProducto(${producto.id})">✏️</button>
-                    <button class="btn-eliminar" onclick="eliminarProducto(${producto.id})">🗑️</button>
+                    <button class="btn-editar" onclick="editarProducto(${producto.id})">âœï¸</button>
+                    <button class="btn-eliminar" onclick="eliminarProducto(${producto.id})">ðŸ—‘ï¸</button>
                 </div>
             `;
             
@@ -1153,7 +1209,7 @@ function guardarProducto() {
     }
     
     if (!precio || precio <= 0) {
-        mostrarNotificacion('Por favor ingresa un precio válido mayor a 0', 'error');
+        mostrarNotificacion('Por favor ingresa un precio vÃ¡lido mayor a 0', 'error');
         return;
     }
     
@@ -1172,17 +1228,17 @@ function guardarProducto() {
         });
         
         if (productoEncontrado) {
-            // Remover de categoría anterior
+            // Remover de categorÃ­a anterior
             categorias[categoriaEncontrada] = categorias[categoriaEncontrada].filter(p => p.id !== id);
             
-            // Agregar a nueva categoría
+            // Agregar a nueva categorÃ­a
             productoEncontrado.nombre = nombre;
             productoEncontrado.precio = precio;
             productoEncontrado.categoria = categoria;
             categorias[categoria].push(productoEncontrado);
         }
     } else {
-        // Nuevo producto (asegurar ID válido si no hay productos aún)
+        // Nuevo producto (asegurar ID vÃ¡lido si no hay productos aÃºn)
         const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
         const nuevoProducto = {
             id: nuevoId,
@@ -1206,7 +1262,7 @@ function guardarProducto() {
     renderizarListaProductos();
     cancelarFormulario();
     
-    console.log('✅ Producto guardado. Total de productos:', productos.length);
+    console.log('âœ… Producto guardado. Total de productos:', productos.length);
 }
 
 function editarProducto(id) {
@@ -1231,9 +1287,9 @@ function editarProducto(id) {
 }
 
 function eliminarProducto(id) {
-    // Eliminar directamente sin confirmación
+    // Eliminar directamente sin confirmaciÃ³n
     
-    // Eliminar de todas las categorías
+    // Eliminar de todas las categorÃ­as
     Object.keys(categorias).forEach(cat => {
         categorias[cat] = categorias[cat].filter(p => p.id !== id);
     });
@@ -1246,7 +1302,7 @@ function eliminarProducto(id) {
         }
     });
     
-    // Eliminar estadísticas del producto
+    // Eliminar estadÃ­sticas del producto
     delete estadisticas[id];
     
     // Guardar cambios en localStorage
@@ -1256,7 +1312,7 @@ function eliminarProducto(id) {
     renderizarProductos();
     renderizarListaProductos();
     
-    console.log('🗑️ Producto eliminado. Total de productos:', productos.length);
+    console.log('ðŸ—‘ï¸ Producto eliminado. Total de productos:', productos.length);
 }
 
 // ========== IMPORTAR CSV ==========
@@ -1273,7 +1329,7 @@ function importarCSV(event) {
             const lineas = contenido.split('\n').filter(linea => linea.trim() !== '');
             
             if (lineas.length === 0) {
-                mostrarNotificacion('El archivo CSV está vacío', 'error');
+                mostrarNotificacion('El archivo CSV estÃ¡ vacÃ­o', 'error');
                 return;
             }
             
@@ -1281,15 +1337,15 @@ function importarCSV(event) {
             let errores = [];
             let categoriasCreadas = [];
             
-            // Detectar si la primera línea es encabezado
+            // Detectar si la primera lÃ­nea es encabezado
             const primeraLinea = lineas[0].toLowerCase();
             const tieneEncabezado = primeraLinea.includes('nombre') || primeraLinea.includes('precio') || primeraLinea.includes('categoria');
             const inicio = tieneEncabezado ? 1 : 0;
             
-            // Obtener el ID máximo actual
+            // Obtener el ID mÃ¡ximo actual
             let maxId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) : 0;
             
-            // Colores predefinidos para categorías automáticas
+            // Colores predefinidos para categorÃ­as automÃ¡ticas
             const coloresDisponibles = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#34495e'];
             
             for (let i = inicio; i < lineas.length; i++) {
@@ -1300,7 +1356,7 @@ function importarCSV(event) {
                 const valores = linea.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
                 
                 if (!valores || valores.length < 3) {
-                    errores.push(`Línea ${i + 1}: formato incorrecto`);
+                    errores.push(`LÃ­nea ${i + 1}: formato incorrecto`);
                     continue;
                 }
                 
@@ -1310,16 +1366,16 @@ function importarCSV(event) {
                 
                 // Validar datos
                 if (!nombre) {
-                    errores.push(`Línea ${i + 1}: nombre vacío`);
+                    errores.push(`LÃ­nea ${i + 1}: nombre vacÃ­o`);
                     continue;
                 }
                 
                 if (isNaN(precio) || precio <= 0) {
-                    errores.push(`Línea ${i + 1}: precio inválido (${valores[1]})`);
+                    errores.push(`LÃ­nea ${i + 1}: precio invÃ¡lido (${valores[1]})`);
                     continue;
                 }
                 
-                // Generar clave de categoría
+                // Generar clave de categorÃ­a
                 const categoriaKey = categoriaNombre
                     .toLowerCase()
                     .normalize('NFD')
@@ -1327,7 +1383,7 @@ function importarCSV(event) {
                     .replace(/\s+/g, '_')
                     .replace(/[^a-z0-9_]/g, '');
                 
-                // Si la categoría no existe, crearla automáticamente
+                // Si la categorÃ­a no existe, crearla automÃ¡ticamente
                 if (!categorias[categoriaKey]) {
                     categorias[categoriaKey] = [];
                     const colorIndex = Object.keys(categorias).length % coloresDisponibles.length;
@@ -1367,22 +1423,22 @@ function importarCSV(event) {
             actualizarSelectCategorias();
             
             // Mostrar resultado
-            let mensaje = `✅ ${productosImportados} productos importados correctamente`;
+            let mensaje = `âœ… ${productosImportados} productos importados correctamente`;
             if (categoriasCreadas.length > 0) {
-                mensaje += `\n\n🆕 Categorías creadas: ${categoriasCreadas.join(', ')}`;
+                mensaje += `\n\nðŸ†• CategorÃ­as creadas: ${categoriasCreadas.join(', ')}`;
             }
             if (errores.length > 0) {
-                mensaje += `\n\n⚠️ ${errores.length} errores:\n${errores.slice(0, 5).join('\n')}`;
+                mensaje += `\n\nâš ï¸ ${errores.length} errores:\n${errores.slice(0, 5).join('\n')}`;
                 if (errores.length > 5) {
-                    mensaje += `\n... y ${errores.length - 5} más`;
+                    mensaje += `\n... y ${errores.length - 5} mÃ¡s`;
                 }
             }
             mostrarNotificacion(mensaje, 'success');
             
-            console.log('📥 CSV importado:', productosImportados, 'productos', categoriasCreadas.length, 'categorías creadas');
+            console.log('ðŸ“¥ CSV importado:', productosImportados, 'productos', categoriasCreadas.length, 'categorÃ­as creadas');
             
         } catch (error) {
-            console.error('❌ Error al importar CSV:', error);
+            console.error('âŒ Error al importar CSV:', error);
             mostrarNotificacion('Error al procesar el archivo CSV. Verifica que el formato sea correcto:\nnombre,precio,categoria', 'error');
         }
         
@@ -1393,7 +1449,7 @@ function importarCSV(event) {
     lector.readAsText(archivo);
 }
 
-// ========== GESTIÓN DE CATEGORÍAS ==========
+// ========== GESTIÃ“N DE CATEGORÃAS ==========
 
 function toggleGestionCategorias() {
     const seccion = document.getElementById('gestionCategorias');
@@ -1406,7 +1462,7 @@ function toggleGestionCategorias() {
 
 function mostrarFormularioCategoria() {
     document.getElementById('formularioCategoria').classList.remove('hidden');
-    document.getElementById('tituloCategoriaForm').textContent = 'Nueva Categoría';
+    document.getElementById('tituloCategoriaForm').textContent = 'Nueva CategorÃ­a';
     document.getElementById('categoriaKeyEdit').value = '';
     document.getElementById('categoriaKey').value = '';
     document.getElementById('categoriaKey').disabled = false;
@@ -1427,12 +1483,12 @@ function guardarCategoria() {
     const keyEdit = document.getElementById('categoriaKeyEdit').value;
     
     if (!nombre) {
-        mostrarNotificacion('Por favor ingresa el nombre de la categoría', 'error');
+        mostrarNotificacion('Por favor ingresa el nombre de la categorÃ­a', 'error');
         return;
     }
     
-    // Generar clave automáticamente desde el nombre
-    // Convertir a minúsculas, quitar acentos y espacios
+    // Generar clave automÃ¡ticamente desde el nombre
+    // Convertir a minÃºsculas, quitar acentos y espacios
     const key = nombre
         .toLowerCase()
         .normalize('NFD')
@@ -1441,32 +1497,32 @@ function guardarCategoria() {
         .replace(/[^a-z0-9_]/g, ''); // Quitar caracteres especiales
     
     if (!key) {
-        mostrarNotificacion('El nombre debe contener al menos letras o números', 'error');
+        mostrarNotificacion('El nombre debe contener al menos letras o nÃºmeros', 'error');
         return;
     }
     
     if (!keyEdit && categorias[key]) {
-        mostrarNotificacion('Ya existe una categoría con ese nombre', 'error');
+        mostrarNotificacion('Ya existe una categorÃ­a con ese nombre', 'error');
         return;
     }
     
     if (keyEdit && keyEdit !== key) {
-        // Editar categoría (cambiar key)
+        // Editar categorÃ­a (cambiar key)
         categorias[key] = categorias[keyEdit];
         delete categorias[keyEdit];
         
-        // Actualizar todos los productos de esa categoría
+        // Actualizar todos los productos de esa categorÃ­a
         categorias[key].forEach(prod => {
             prod.categoria = key;
         });
         
         delete categoriasInfo[keyEdit];
     } else if (!keyEdit) {
-        // Nueva categoría
+        // Nueva categorÃ­a
         categorias[key] = [];
     }
     
-    // Actualizar info de la categoría
+    // Actualizar info de la categorÃ­a
     categoriasInfo[key] = { nombre, color };
     
     // Actualizar select de productos
@@ -1489,7 +1545,7 @@ function editarCategoria(key) {
     
     if (info) {
         document.getElementById('formularioCategoria').classList.remove('hidden');
-        document.getElementById('tituloCategoriaForm').textContent = 'Editar Categoría';
+        document.getElementById('tituloCategoriaForm').textContent = 'Editar CategorÃ­a';
         document.getElementById('categoriaKeyEdit').value = key;
         document.getElementById('categoriaNombre').value = info.nombre;
         document.getElementById('categoriaColor').value = info.color;
@@ -1514,13 +1570,13 @@ function seleccionarMetodoVentaManual(metodo) {
     const descripcion = document.getElementById('descripcionVentaManual').value.trim();
     
     if (!monto || monto <= 0) {
-        mostrarNotificacion('Por favor ingresa un monto válido mayor a 0', 'error');
+        mostrarNotificacion('Por favor ingresa un monto vÃ¡lido mayor a 0', 'error');
         return;
     }
     
-    // Registrar sin confirmación
+    // Registrar sin confirmaciÃ³n
     
-    // Crear registro detallado de la transacción manual
+    // Crear registro detallado de la transacciÃ³n manual
     const transaccion = {
         id: Date.now(),
         fecha: new Date().toISOString(),
@@ -1537,7 +1593,7 @@ function seleccionarMetodoVentaManual(metodo) {
         esVentaManual: true
     };
     
-    // Agregar transacción al historial
+    // Agregar transacciÃ³n al historial
     transacciones.push(transaccion);
     
     // Registrar la venta manual
@@ -1553,33 +1609,33 @@ function seleccionarMetodoVentaManual(metodo) {
     // Guardar en localStorage
     guardarDatosLocalStorage();
     
-    // Actualizar estadísticas
+    // Actualizar estadÃ­sticas
     actualizarEstadisticas();
     
     // Cerrar modal
     cerrarModalVentaManual();
     
-    let mensaje = `✅ Venta manual registrada: $${monto.toFixed(2)}\nMétodo: ${metodo === 'tarjeta' ? 'Tarjeta' : 'Efectivo'}`;
+    let mensaje = `âœ… Venta manual registrada: $${monto.toFixed(2)}\nMÃ©todo: ${metodo === 'tarjeta' ? 'Tarjeta' : 'Efectivo'}`;
     if (descripcion) {
-        mensaje += `\nDescripción: ${descripcion}`;
+        mensaje += `\nDescripciÃ³n: ${descripcion}`;
     }
     mostrarNotificacion(mensaje, 'success');
     
-    console.log('💰 Venta manual registrada:', { monto, metodo, descripcion });
+    console.log('ðŸ’° Venta manual registrada:', { monto, metodo, descripcion });
 }
 
 function eliminarCategoria(key) {
     if (!categorias[key]) {
-        mostrarNotificacion('La categoría no existe.', 'error');
+        mostrarNotificacion('La categorÃ­a no existe.', 'error');
         return;
     }
     
     if (categorias[key].length > 0) {
-        mostrarNotificacion('No se puede eliminar una categoría que tiene productos. Elimina primero los productos.', 'error');
+        mostrarNotificacion('No se puede eliminar una categorÃ­a que tiene productos. Elimina primero los productos.', 'error');
         return;
     }
     
-    // Eliminar sin confirmación
+    // Eliminar sin confirmaciÃ³n
     delete categorias[key];
     delete categoriasInfo[key];
     
@@ -1605,8 +1661,8 @@ function renderizarListaCategorias() {
                 <span class="producto-admin-precio">${categorias[key].length} productos</span>
             </div>
             <div class="producto-admin-acciones">
-                <button class="btn-editar" onclick="editarCategoria('${key}')">✏️</button>
-                <button class="btn-eliminar" onclick="eliminarCategoria('${key}')">🗑️</button>
+                <button class="btn-editar" onclick="editarCategoria('${key}')">âœï¸</button>
+                <button class="btn-eliminar" onclick="eliminarCategoria('${key}')">ðŸ—‘ï¸</button>
             </div>
         `;
         
@@ -1642,7 +1698,7 @@ function cerrarModalRetiro() {
     document.getElementById('modalRetiro').classList.add('hidden');
 }
 
-// Seleccionar operación rápida de retiro
+// Seleccionar operaciÃ³n rÃ¡pida de retiro
 function seleccionarRetiroRapido(tipo) {
     document.getElementById('justificacionRetiro').value = tipo;
     document.getElementById('montoRetiro').focus();
@@ -1654,12 +1710,12 @@ function confirmarRetiro() {
     const justificacion = document.getElementById('justificacionRetiro').value.trim();
     
     if (!monto || monto <= 0) {
-        mostrarNotificacion('Por favor ingresa un monto válido mayor a 0', 'error');
+        mostrarNotificacion('Por favor ingresa un monto vÃ¡lido mayor a 0', 'error');
         return;
     }
     
     if (!justificacion) {
-        mostrarNotificacion('Por favor ingresa una justificación para el retiro', 'error');
+        mostrarNotificacion('Por favor ingresa una justificaciÃ³n para el retiro', 'error');
         return;
     }
     
@@ -1681,13 +1737,13 @@ function confirmarRetiro() {
     // Guardar en localStorage
     guardarDatosLocalStorage();
     
-    // Actualizar estadísticas
+    // Actualizar estadÃ­sticas
     actualizarEstadisticas();
     
     // Cerrar modal
     cerrarModalRetiro();
     
-    mostrarNotificacion(`Retiro registrado: $${monto.toFixed(2)}\nJustificación: ${justificacion}`, 'success');
+    mostrarNotificacion(`Retiro registrado: $${monto.toFixed(2)}\nJustificaciÃ³n: ${justificacion}`, 'success');
 }
 
 // ===== FUNCIONES DE INGRESOS DE EFECTIVO =====
@@ -1708,7 +1764,7 @@ function cerrarModalIngreso() {
     document.getElementById('modalIngreso').classList.add('hidden');
 }
 
-// Seleccionar operación rápida de ingreso
+// Seleccionar operaciÃ³n rÃ¡pida de ingreso
 function seleccionarIngresoRapido(tipo) {
     document.getElementById('conceptoIngreso').value = tipo;
     document.getElementById('montoIngreso').focus();
@@ -1720,7 +1776,7 @@ function confirmarIngreso() {
     const concepto = document.getElementById('conceptoIngreso').value.trim();
     
     if (!monto || monto <= 0) {
-        mostrarNotificacion('Por favor ingresa un monto válido mayor a 0', 'error');
+        mostrarNotificacion('Por favor ingresa un monto vÃ¡lido mayor a 0', 'error');
         return;
     }
     
@@ -1748,7 +1804,7 @@ function confirmarIngreso() {
     // Guardar en localStorage
     guardarDatosLocalStorage();
     
-    // Actualizar estadísticas
+    // Actualizar estadÃ­sticas
     actualizarEstadisticas();
     
     // Cerrar modal
@@ -1757,16 +1813,16 @@ function confirmarIngreso() {
     mostrarNotificacion(`Ingreso registrado: $${monto.toFixed(2)}\nConcepto: ${concepto}`, 'success');
 }
 
-// ===== CONFIGURACIÓN DE OPERACIONES RÁPIDAS =====
+// ===== CONFIGURACIÃ“N DE OPERACIONES RÃPIDAS =====
 
-// Abrir modal de configuración de operaciones
+// Abrir modal de configuraciÃ³n de operaciones
 function abrirModalConfigOperaciones() {
     cargarOperacionesDesdeLocalStorage();
     renderizarOperaciones();
     document.getElementById('modalConfigOperaciones').classList.remove('hidden');
 }
 
-// Cerrar modal de configuración
+// Cerrar modal de configuraciÃ³n
 function cerrarModalConfigOperaciones() {
     document.getElementById('modalConfigOperaciones').classList.add('hidden');
     cancelarFormularioOperacion();
@@ -1790,8 +1846,8 @@ function renderizarOperaciones() {
                     <span>${op.nombre}</span>
                 </div>
                 <div class="operacion-item-acciones">
-                    <button class="btn-editar-op" onclick="editarOperacion('retiro', ${op.id})">✏️ Editar</button>
-                    <button class="btn-eliminar-op" onclick="eliminarOperacion('retiro', ${op.id})">🗑️</button>
+                    <button class="btn-editar-op" onclick="editarOperacion('retiro', ${op.id})">âœï¸ Editar</button>
+                    <button class="btn-eliminar-op" onclick="eliminarOperacion('retiro', ${op.id})">ðŸ—‘ï¸</button>
                 </div>
             `;
             listaRetiros.appendChild(div);
@@ -1814,8 +1870,8 @@ function renderizarOperaciones() {
                     <span>${op.nombre}</span>
                 </div>
                 <div class="operacion-item-acciones">
-                    <button class="btn-editar-op" onclick="editarOperacion('ingreso', ${op.id})">✏️ Editar</button>
-                    <button class="btn-eliminar-op" onclick="eliminarOperacion('ingreso', ${op.id})">🗑️</button>
+                    <button class="btn-editar-op" onclick="editarOperacion('ingreso', ${op.id})">âœï¸ Editar</button>
+                    <button class="btn-eliminar-op" onclick="eliminarOperacion('ingreso', ${op.id})">ðŸ—‘ï¸</button>
                 </div>
             `;
             listaIngresos.appendChild(div);
@@ -1826,7 +1882,7 @@ function renderizarOperaciones() {
     actualizarBotonesOperacionesRapidas();
 }
 
-// Actualizar botones de operaciones rápidas en los modales
+// Actualizar botones de operaciones rÃ¡pidas en los modales
 function actualizarBotonesOperacionesRapidas() {
     // Actualizar modal de retiro
     const modalRetiro = document.getElementById('modalRetiro');
@@ -1859,10 +1915,10 @@ function actualizarBotonesOperacionesRapidas() {
     }
 }
 
-// Mostrar formulario para agregar/editar operación
+// Mostrar formulario para agregar/editar operaciÃ³n
 function mostrarFormularioOperacion(tipo) {
     document.getElementById('formularioOperacion').classList.remove('hidden');
-    document.getElementById('tituloOperacionForm').textContent = tipo === 'retiro' ? 'Nueva Operación de Retiro' : 'Nueva Operación de Ingreso';
+    document.getElementById('tituloOperacionForm').textContent = tipo === 'retiro' ? 'Nueva OperaciÃ³n de Retiro' : 'Nueva OperaciÃ³n de Ingreso';
     document.getElementById('operacionIdEdit').value = '';
     document.getElementById('operacionTipoEdit').value = tipo;
     document.getElementById('operacionEmoji').value = '';
@@ -1878,7 +1934,7 @@ function cancelarFormularioOperacion() {
     document.getElementById('operacionNombre').value = '';
 }
 
-// Guardar operación
+// Guardar operaciÃ³n
 function guardarOperacion() {
     const emoji = document.getElementById('operacionEmoji').value.trim();
     const nombre = document.getElementById('operacionNombre').value.trim();
@@ -1920,14 +1976,14 @@ function guardarOperacion() {
     cancelarFormularioOperacion();
 }
 
-// Editar operación
+// Editar operaciÃ³n
 function editarOperacion(tipo, id) {
     const lista = tipo === 'retiro' ? operacionesRetiro : operacionesIngreso;
     const operacion = lista.find(op => op.id === id);
     
     if (operacion) {
         document.getElementById('formularioOperacion').classList.remove('hidden');
-        document.getElementById('tituloOperacionForm').textContent = tipo === 'retiro' ? 'Editar Operación de Retiro' : 'Editar Operación de Ingreso';
+        document.getElementById('tituloOperacionForm').textContent = tipo === 'retiro' ? 'Editar OperaciÃ³n de Retiro' : 'Editar OperaciÃ³n de Ingreso';
         document.getElementById('operacionIdEdit').value = operacion.id;
         document.getElementById('operacionTipoEdit').value = tipo;
         document.getElementById('operacionEmoji').value = operacion.emoji;
@@ -1935,9 +1991,9 @@ function editarOperacion(tipo, id) {
     }
 }
 
-// Eliminar operación
+// Eliminar operaciÃ³n
 function eliminarOperacion(tipo, id) {
-    // Eliminar directamente sin confirmación
+    // Eliminar directamente sin confirmaciÃ³n
     if (tipo === 'retiro') {
         operacionesRetiro = operacionesRetiro.filter(op => op.id !== id);
     } else {
@@ -2007,7 +2063,7 @@ function agregarSeparador() {
 function moverProducto(index, direccion) {
     const nuevaPosicion = index + direccion;
     
-    // Verificar límites
+    // Verificar lÃ­mites
     if (nuevaPosicion < 0 || nuevaPosicion >= categorias[categoriaActiva].length) {
         return;
     }
@@ -2029,7 +2085,7 @@ function moverProducto(index, direccion) {
 
 // Eliminar separador
 function eliminarSeparador(id) {
-    // Eliminar directamente sin confirmación
+    // Eliminar directamente sin confirmaciÃ³n
     
     categorias[categoriaActiva] = categorias[categoriaActiva].filter(p => p.id !== id);
     
@@ -2050,12 +2106,12 @@ function toggleModoReordenar() {
     const btn = document.getElementById('btnReordenar');
     
     if (modoReordenar) {
-        btn.textContent = '✅ Guardar Orden';
+        btn.textContent = 'âœ… Guardar Orden';
         btn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
         // Mostrar mensaje de ayuda
         mostrarNotificacion('Arrastra los productos para reordenarlos');
     } else {
-        btn.textContent = '🔀 Reordenar Productos';
+        btn.textContent = 'ðŸ”€ Reordenar Productos';
         btn.style.background = '';
         // Guardar el orden
         guardarOrdenProductos();
@@ -2084,7 +2140,7 @@ function cargarOrdenProductos() {
         try {
             const ordenPorCategoria = JSON.parse(ordenGuardado);
             
-            // Reordenar productos según el orden guardado
+            // Reordenar productos segÃºn el orden guardado
             Object.keys(ordenPorCategoria).forEach(categoriaKey => {
                 if (categorias[categoriaKey]) {
                     const orden = ordenPorCategoria[categoriaKey];
@@ -2098,7 +2154,7 @@ function cargarOrdenProductos() {
                         }
                     });
                     
-                    // Agregar productos nuevos que no estén en el orden guardado
+                    // Agregar productos nuevos que no estÃ©n en el orden guardado
                     categorias[categoriaKey].forEach(producto => {
                         if (!orden.includes(producto.id)) {
                             productosOrdenados.push(producto);
@@ -2114,7 +2170,7 @@ function cargarOrdenProductos() {
     }
 }
 
-// Mostrar notificación temporal
+// Mostrar notificaciÃ³n temporal
 function mostrarNotificacion(mensaje) {
     const notificacion = document.createElement('div');
     notificacion.textContent = mensaje;
@@ -2169,7 +2225,7 @@ function handleDrop(e, productoDestino) {
     e.preventDefault();
     
     if (elementoArrastrado && elementoArrastrado.id !== productoDestino.id) {
-        // Obtener índices
+        // Obtener Ã­ndices
         const productosCategoria = categorias[categoriaActiva];
         const indiceOrigen = productosCategoria.findIndex(p => p.id === elementoArrastrado.id);
         const indiceDestino = productosCategoria.findIndex(p => p.id === productoDestino.id);
@@ -2187,3 +2243,805 @@ function handleDrop(e, productoDestino) {
     return false;
 }
 
+// =====================================================
+// SISTEMA MEJORADO DE REPORTES Y ANÁLISIS
+// =====================================================
+
+// Variables globales para los gráficos
+let chartVentasPorHora = null;
+let chartTendenciaSemanal = null;
+let chartDistribucion = null;
+let chartComparativa = null;
+let tabActualReporte = 'resumen';
+
+// Cambiar entre pestañas del reporte
+function cambiarTabReporte(tab) {
+    // Actualizar pestañas
+    document.querySelectorAll('.reporte-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.reporte-tab-content').forEach(c => c.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    
+    tabActualReporte = tab;
+    
+    // Renderizar contenido específico de la pestaña
+    if (tab === 'graficos') {
+        renderizarGraficos();
+    } else if (tab === 'comparativa') {
+        actualizarComparativa();
+    } else if (tab === 'detalles') {
+        renderizarDetalles();
+    }
+}
+
+// Actualizar vista de reporte mejorada
+function actualizarVistaReporte() {
+    // Mostrar datos del día seleccionado
+    const fechaSeleccionada = new Date(fechaReporteVisualizando);
+    
+    // Mostrar la fecha del día
+    const textoFecha = fechaSeleccionada.toLocaleDateString('es-ES', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+    });
+    document.getElementById('reporteFechaModal').textContent = textoFecha.charAt(0).toUpperCase() + textoFecha.slice(1);
+    
+    // Cargar datos del día seleccionado
+    const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
+    const hoy = new Date().toDateString();
+    const fechaKey = fechaSeleccionada.toDateString();
+    
+    let datosDelDia;
+    if (fechaKey === hoy) {
+        datosDelDia = {
+            estadisticas,
+            ventasTotales,
+            ventasTarjeta,
+            ventasEfectivo,
+            numTransacciones,
+            retiros,
+            transacciones
+        };
+    } else {
+        datosDelDia = historico[fechaKey] || {
+            estadisticas: {},
+            ventasTotales: 0,
+            ventasTarjeta: 0,
+            ventasEfectivo: 0,
+            numTransacciones: 0,
+            retiros: [],
+            transacciones: []
+        };
+    }
+    
+    // Obtener datos del día anterior para comparación
+    const fechaAnterior = new Date(fechaSeleccionada);
+    fechaAnterior.setDate(fechaAnterior.getDate() - 1);
+    const fechaAnteriorKey = fechaAnterior.toDateString();
+    const datosAyer = historico[fechaAnteriorKey] || { ventasTotales: 0, numTransacciones: 0 };
+    
+    // Actualizar métricas principales con comparativas
+    actualizarMetricaPrincipal('metricaTotal', datosDelDia.ventasTotales, datosAyer.ventasTotales);
+    actualizarMetricaPrincipal('metricaTransacciones', datosDelDia.numTransacciones, datosAyer.numTransacciones, false);
+    
+    const ticketPromedio = datosDelDia.numTransacciones > 0 ? datosDelDia.ventasTotales / datosDelDia.numTransacciones : 0;
+    const ticketPromedioAyer = datosAyer.numTransacciones > 0 ? datosAyer.ventasTotales / datosAyer.numTransacciones : 0;
+    actualizarMetricaPrincipal('metricaTicketPromedio', ticketPromedio, ticketPromedioAyer);
+    
+    // Producto más vendido
+    const productoMasVendido = obtenerProductoMasVendido(datosDelDia.estadisticas);
+    document.getElementById('metricaMasVendido').textContent = productoMasVendido || '-';
+    
+    // Actualizar métodos de pago con barras visuales
+    const total = datosDelDia.ventasTotales || 0.01; // Evitar división por cero
+    const porcentajeTarjeta = (datosDelDia.ventasTarjeta / total) * 100;
+    const porcentajeEfectivo = (datosDelDia.ventasEfectivo / total) * 100;
+    
+    document.getElementById('reporteTarjeta').textContent = datosDelDia.ventasTarjeta.toFixed(2);
+    document.getElementById('reporteEfectivo').textContent = datosDelDia.ventasEfectivo.toFixed(2);
+    document.getElementById('barraTarjeta').style.width = porcentajeTarjeta + '%';
+    document.getElementById('barraEfectivo').style.width = porcentajeEfectivo + '%';
+    document.getElementById('porcentajeTarjeta').textContent = porcentajeTarjeta.toFixed(1) + '%';
+    document.getElementById('porcentajeEfectivo').textContent = porcentajeEfectivo.toFixed(1) + '%';
+    
+    // Top 5 productos más vendidos
+    renderizarTopProductos(datosDelDia.estadisticas);
+    
+    // Actualizar retiros (mismo código que antes)
+    const reporteRetiros = document.getElementById('reporteRetiros');
+    reporteRetiros.innerHTML = '';
+    
+    const retirosDelDia = datosDelDia.retiros || [];
+    if (retirosDelDia.length > 0) {
+        retirosDelDia.forEach(retiro => {
+            const retiroDiv = document.createElement('div');
+            retiroDiv.className = 'retiro-item';
+            
+            const fechaRetiro = new Date(retiro.fecha);
+            const horaRetiro = fechaRetiro.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            
+            retiroDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; padding: 10px; border: 1px solid #eee; border-radius: 5px; margin-bottom: 10px; background: #f9f9f9;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; color: #d9534f;">-$${retiro.monto.toFixed(2)}</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">${retiro.justificacion}</div>
+                    </div>
+                    <div style="font-size: 12px; color: #999;">${horaRetiro}</div>
+                </div>
+            `;
+            
+            reporteRetiros.appendChild(retiroDiv);
+        });
+    } else {
+        reporteRetiros.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay retiros registrados en esta fecha</p>';
+    }
+    
+    // Generar alertas inteligentes
+    generarAlertas(datosDelDia, datosAyer);
+}
+
+// Actualizar métrica principal con indicador de cambio
+function actualizarMetricaPrincipal(id, valorActual, valorAnterior, esDinero = true) {
+    const elemento = document.getElementById(id);
+    if (elemento) {
+        elemento.textContent = esDinero ? valorActual.toFixed(2) : valorActual;
+    }
+    
+    const cambioElemento = document.getElementById(id + 'Cambio');
+    if (cambioElemento && valorAnterior > 0) {
+        const diferencia = valorActual - valorAnterior;
+        const porcentaje = (diferencia / valorAnterior) * 100;
+        
+        cambioElemento.classList.remove('positivo', 'negativo', 'neutral');
+        
+        if (Math.abs(porcentaje) < 1) {
+            cambioElemento.classList.add('neutral');
+            cambioElemento.textContent = 'Sin cambios';
+        } else if (diferencia > 0) {
+            cambioElemento.classList.add('positivo');
+            cambioElemento.textContent = `${porcentaje.toFixed(1)}% vs ayer`;
+        } else {
+            cambioElemento.classList.add('negativo');
+            cambioElemento.textContent = `${Math.abs(porcentaje).toFixed(1)}% vs ayer`;
+        }
+    } else if (cambioElemento) {
+        cambioElemento.textContent = '';
+    }
+}
+
+// Obtener producto más vendido
+function obtenerProductoMasVendido(estadisticas) {
+    let maxCantidad = 0;
+    let productoMasVendido = null;
+    
+    Object.keys(estadisticas).forEach(productoId => {
+        const cantidad = estadisticas[productoId];
+        if (cantidad > maxCantidad) {
+            maxCantidad = cantidad;
+            const producto = productos.find(p => p.id == productoId);
+            if (producto) {
+                productoMasVendido = producto.nombre;
+            }
+        }
+    });
+    
+    return productoMasVendido;
+}
+
+// Renderizar top 5 productos
+function renderizarTopProductos(estadisticas) {
+    const topProductos = document.getElementById('topProductos');
+    topProductos.innerHTML = '';
+    
+    // Crear array de productos con cantidades
+    const productosConCantidad = [];
+    Object.keys(estadisticas).forEach(productoId => {
+        const cantidad = estadisticas[productoId];
+        if (cantidad > 0) {
+            const producto = productos.find(p => p.id == productoId);
+            if (producto) {
+                productosConCantidad.push({
+                    nombre: producto.nombre,
+                    cantidad: cantidad
+                });
+            }
+        }
+    });
+    
+    // Ordenar por cantidad descendente
+    productosConCantidad.sort((a, b) => b.cantidad - a.cantidad);
+    
+    // Tomar top 5
+    const top5 = productosConCantidad.slice(0, 5);
+    
+    if (top5.length === 0) {
+        topProductos.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay ventas registradas</p>';
+        return;
+    }
+    
+    const maxCantidad = top5[0].cantidad;
+    
+    top5.forEach((producto, index) => {
+        const porcentaje = (producto.cantidad / maxCantidad) * 100;
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'top-producto-item';
+        itemDiv.innerHTML = `
+            <div class="top-producto-posicion">#${index + 1}</div>
+            <div class="top-producto-info">
+                <div class="top-producto-nombre">${producto.nombre}</div>
+                <div class="top-producto-barra">
+                    <div class="top-producto-barra-fill" style="width: ${porcentaje}%"></div>
+                </div>
+            </div>
+            <div class="top-producto-cantidad">${producto.cantidad} unidades</div>
+        `;
+        
+        topProductos.appendChild(itemDiv);
+    });
+}
+
+// Renderizar gráficos
+function renderizarGraficos() {
+    renderizarGraficoVentasPorHora();
+    renderizarGraficoTendenciaSemanal();
+    renderizarGraficoDistribucion();
+}
+
+// Gráfico de ventas por hora
+function renderizarGraficoVentasPorHora() {
+    const canvas = document.getElementById('chartVentasPorHora');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Destruir gráfico anterior si existe
+    if (chartVentasPorHora) {
+        chartVentasPorHora.destroy();
+    }
+    
+    // Obtener datos del día actual
+    const fechaSeleccionada = new Date(fechaReporteVisualizando);
+    const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
+    const hoy = new Date().toDateString();
+    const fechaKey = fechaSeleccionada.toDateString();
+    
+    let datosDelDia;
+    if (fechaKey === hoy) {
+        datosDelDia = { transacciones };
+    } else {
+        datosDelDia = historico[fechaKey] || { transacciones: [] };
+    }
+    
+    // Agrupar ventas por hora
+    const ventasPorHora = new Array(24).fill(0);
+    
+    (datosDelDia.transacciones || []).forEach(trans => {
+        const fecha = new Date(trans.fecha);
+        const hora = fecha.getHours();
+        ventasPorHora[hora] += trans.total;
+    });
+    
+    // Crear gráfico
+    chartVentasPorHora = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+            datasets: [{
+                label: 'Ventas ($)',
+                data: ventasPorHora,
+                backgroundColor: 'rgba(30, 60, 114, 0.7)',
+                borderColor: 'rgba(30, 60, 114, 1)',
+                borderWidth: 2,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico de tendencia semanal
+function renderizarGraficoTendenciaSemanal() {
+    const canvas = document.getElementById('chartTendenciaSemanal');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    if (chartTendenciaSemanal) {
+        chartTendenciaSemanal.destroy();
+    }
+    
+    // Obtener datos de los últimos 7 días
+    const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
+    const hoy = new Date();
+    
+    const labels = [];
+    const datosVentas = [];
+    const datosTransacciones = [];
+    
+    for (let i = 6; i >= 0; i--) {
+        const fecha = new Date(hoy);
+        fecha.setDate(fecha.getDate() - i);
+        const fechaKey = fecha.toDateString();
+        
+        const diaNombre = fecha.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+        labels.push(diaNombre);
+        
+        if (fechaKey === hoy.toDateString()) {
+            datosVentas.push(ventasTotales);
+            datosTransacciones.push(numTransacciones);
+        } else {
+            const datosDia = historico[fechaKey] || { ventasTotales: 0, numTransacciones: 0 };
+            datosVentas.push(datosDia.ventasTotales);
+            datosTransacciones.push(datosDia.numTransacciones);
+        }
+    }
+    
+    chartTendenciaSemanal = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Ventas ($)',
+                    data: datosVentas,
+                    borderColor: 'rgba(30, 60, 114, 1)',
+                    backgroundColor: 'rgba(30, 60, 114, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Transacciones',
+                    data: datosTransacciones,
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value;
+                        }
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    grid: {
+                        drawOnChartArea: false,
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico de distribución (pie)
+function renderizarGraficoDistribucion() {
+    const canvas = document.getElementById('chartDistribucion');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    if (chartDistribucion) {
+        chartDistribucion.destroy();
+    }
+    
+    // Obtener datos del día actual
+    const fechaSeleccionada = new Date(fechaReporteVisualizando);
+    const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
+    const hoy = new Date().toDateString();
+    const fechaKey = fechaSeleccionada.toDateString();
+    
+    let datosDelDia;
+    if (fechaKey === hoy) {
+        datosDelDia = { ventasTarjeta, ventasEfectivo };
+    } else {
+        datosDelDia = historico[fechaKey] || { ventasTarjeta: 0, ventasEfectivo: 0 };
+    }
+    
+    chartDistribucion = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Tarjeta', 'Efectivo'],
+            datasets: [{
+                data: [datosDelDia.ventasTarjeta, datosDelDia.ventasEfectivo],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(16, 185, 129, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Actualizar comparativa
+function actualizarComparativa() {
+    const selector = document.getElementById('comparativaSelector');
+    const tipo = selector.value;
+    
+    const fechaSeleccionada = new Date(fechaReporteVisualizando);
+    const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
+    const hoy = new Date().toDateString();
+    const fechaKey = fechaSeleccionada.toDateString();
+    
+    // Datos del día actual
+    let datosHoy;
+    if (fechaKey === hoy) {
+        datosHoy = { ventasTotales, ventasTarjeta, ventasEfectivo, numTransacciones };
+    } else {
+        datosHoy = historico[fechaKey] || { ventasTotales: 0, ventasTarjeta: 0, ventasEfectivo: 0, numTransacciones: 0 };
+    }
+    
+    // Datos de comparación
+    let datosComparacion;
+    let labelComparacion;
+    
+    if (tipo === 'ayer') {
+        const ayer = new Date(fechaSeleccionada);
+        ayer.setDate(ayer.getDate() - 1);
+        const ayerKey = ayer.toDateString();
+        datosComparacion = historico[ayerKey] || { ventasTotales: 0, ventasTarjeta: 0, ventasEfectivo: 0, numTransacciones: 0 };
+        labelComparacion = 'Ayer';
+    } else if (tipo === 'semana-pasada') {
+        const semanaPasada = new Date(fechaSeleccionada);
+        semanaPasada.setDate(semanaPasada.getDate() - 7);
+        const semanaKey = semanaPasada.toDateString();
+        datosComparacion = historico[semanaKey] || { ventasTotales: 0, ventasTarjeta: 0, ventasEfectivo: 0, numTransacciones: 0 };
+        labelComparacion = 'Hace 1 semana';
+    } else {
+        // Promedio de la semana
+        let sumaVentas = 0, sumaTransacciones = 0, dias = 0;
+        for (let i = 0; i < 7; i++) {
+            const fecha = new Date(fechaSeleccionada);
+            fecha.setDate(fecha.getDate() - i);
+            const key = fecha.toDateString();
+            const datos = key === hoy ? { ventasTotales, numTransacciones } : (historico[key] || {});
+            if (datos.ventasTotales) {
+                sumaVentas += datos.ventasTotales;
+                sumaTransacciones += datos.numTransacciones || 0;
+                dias++;
+            }
+        }
+        datosComparacion = {
+            ventasTotales: dias > 0 ? sumaVentas / dias : 0,
+            numTransacciones: dias > 0 ? sumaTransacciones / dias : 0
+        };
+        labelComparacion = 'Promedio semanal';
+    }
+    
+    // Renderizar grid de comparación
+    const grid = document.getElementById('comparativaGrid');
+    grid.innerHTML = '';
+    
+    const metricas = [
+        { key: 'ventasTotales', label: 'Total de Ventas', simbolo: '$' },
+        { key: 'numTransacciones', label: 'Transacciones', simbolo: '' }
+    ];
+    
+    metricas.forEach(metrica => {
+        const valorHoy = datosHoy[metrica.key] || 0;
+        const valorComparacion = datosComparacion[metrica.key] || 0;
+        const diferencia = valorHoy - valorComparacion;
+        const porcentaje = valorComparacion > 0 ? (diferencia / valorComparacion) * 100 : 0;
+        
+        let claseColor = 'neutral';
+        if (Math.abs(porcentaje) >= 1) {
+            claseColor = diferencia > 0 ? 'positivo' : 'negativo';
+        }
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'comparativa-item';
+        itemDiv.innerHTML = `
+            <h5>${metrica.label}</h5>
+            <div class="comparativa-valores">
+                <span class="comparativa-hoy">${metrica.simbolo}${valorHoy.toFixed(metrica.simbolo ? 2 : 0)}</span>
+                <span class="comparativa-anterior">${labelComparacion}: ${metrica.simbolo}${valorComparacion.toFixed(metrica.simbolo ? 2 : 0)}</span>
+            </div>
+            <div class="comparativa-diferencia ${claseColor}">
+                ${diferencia > 0 ? '+' : ''}${porcentaje.toFixed(1)}%
+            </div>
+        `;
+        
+        grid.appendChild(itemDiv);
+    });
+    
+    // Renderizar gráfico comparativo
+    renderizarGraficoComparativa(datosHoy, datosComparacion, labelComparacion);
+}
+
+// Gráfico comparativo
+function renderizarGraficoComparativa(datosHoy, datosComparacion, labelComparacion) {
+    const canvas = document.getElementById('chartComparativa');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    if (chartComparativa) {
+        chartComparativa.destroy();
+    }
+    
+    chartComparativa = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Ventas', 'Tarjeta', 'Efectivo', 'Transacciones'],
+            datasets: [
+                {
+                    label: 'Hoy',
+                    data: [
+                        datosHoy.ventasTotales || 0,
+                        datosHoy.ventasTarjeta || 0,
+                        datosHoy.ventasEfectivo || 0,
+                        datosHoy.numTransacciones || 0
+                    ],
+                    backgroundColor: 'rgba(30, 60, 114, 0.7)',
+                    borderColor: 'rgba(30, 60, 114, 1)',
+                    borderWidth: 2
+                },
+                {
+                    label: labelComparacion,
+                    data: [
+                        datosComparacion.ventasTotales || 0,
+                        datosComparacion.ventasTarjeta || 0,
+                        datosComparacion.ventasEfectivo || 0,
+                        datosComparacion.numTransacciones || 0
+                    ],
+                    backgroundColor: 'rgba(107, 114, 128, 0.7)',
+                    borderColor: 'rgba(107, 114, 128, 1)',
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Renderizar detalles
+function renderizarDetalles() {
+    // Obtener datos del día
+    const fechaSeleccionada = new Date(fechaReporteVisualizando);
+    const historico = JSON.parse(localStorage.getItem('panaderiaHistorico') || '{}');
+    const hoy = new Date().toDateString();
+    const fechaKey = fechaSeleccionada.toDateString();
+    
+    let datosDelDia;
+    if (fechaKey === hoy) {
+        datosDelDia = { estadisticas, transacciones };
+    } else {
+        datosDelDia = historico[fechaKey] || { estadisticas: {}, transacciones: [] };
+    }
+    
+    // Renderizar todos los productos
+    const reporteProductos = document.getElementById('reporteProductos');
+    reporteProductos.innerHTML = '';
+    
+    let hayVentas = false;
+    productos.forEach(producto => {
+        const cantidad = (datosDelDia.estadisticas || {})[producto.id] || 0;
+        
+        if (cantidad > 0) {
+            hayVentas = true;
+            const total = cantidad * producto.precio;
+            
+            const card = document.createElement('div');
+            card.className = 'producto-detalle-card';
+            card.innerHTML = `
+                <div class="producto-detalle-nombre">${producto.nombre}</div>
+                <div class="producto-detalle-stats">
+                    <div class="producto-detalle-stat">
+                        <span>Cantidad:</span>
+                        <strong>${cantidad}</strong>
+                    </div>
+                    <div class="producto-detalle-stat">
+                        <span>Total:</span>
+                        <strong>$${total.toFixed(2)}</strong>
+                    </div>
+                </div>
+            `;
+            
+            reporteProductos.appendChild(card);
+        }
+    });
+    
+    if (!hayVentas) {
+        reporteProductos.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay productos vendidos en esta fecha</p>';
+    }
+    
+    // Renderizar historial de transacciones
+    const historial = document.getElementById('historialTransacciones');
+    historial.innerHTML = '';
+    
+    const transaccionesDelDia = datosDelDia.transacciones || [];
+    
+    if (transaccionesDelDia.length === 0) {
+        historial.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No hay transacciones registradas</p>';
+        return;
+    }
+    
+    // Ordenar por fecha descendente (más reciente primero)
+    transaccionesDelDia.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    
+    transaccionesDelDia.forEach((trans, index) => {
+        const fecha = new Date(trans.fecha);
+        const hora = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        const metodo = trans.metodoPago === 'tarjeta' ? '💳 Tarjeta' : '💵 Efectivo';
+        
+        const transDiv = document.createElement('div');
+        transDiv.className = 'transaccion-detalle-item';
+        
+        let itemsHTML = '';
+        if (trans.items && trans.items.length > 0) {
+            itemsHTML = trans.items.map(item => `
+                <div class="transaccion-item">
+                    <span>${item.cantidad}x ${item.nombre}</span>
+                    <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
+                </div>
+            `).join('');
+        }
+        
+        transDiv.innerHTML = `
+            <div class="transaccion-header">
+                <div>
+                    <span class="transaccion-hora">#${transaccionesDelDia.length - index} - ${hora}</span>
+                    <span style="margin-left: 10px; color: #6b7280;">${metodo}</span>
+                </div>
+                <span class="transaccion-total">$${trans.total.toFixed(2)}</span>
+            </div>
+            <div class="transaccion-items">
+                ${itemsHTML}
+            </div>
+        `;
+        
+        historial.appendChild(transDiv);
+    });
+}
+
+// Generar alertas inteligentes
+function generarAlertas(datosHoy, datosAyer) {
+    const alertas = document.getElementById('alertasReporte');
+    if (!alertas) return;
+    
+    alertas.innerHTML = '';
+    
+    const alertasArray = [];
+    
+    // Alerta: Ventas muy por debajo del promedio
+    if (datosAyer.ventasTotales > 0) {
+        const diferencia = ((datosHoy.ventasTotales - datosAyer.ventasTotales) / datosAyer.ventasTotales) * 100;
+        
+        if (diferencia < -20) {
+            alertasArray.push({
+                tipo: 'warning',
+                icono: '⚠️',
+                mensaje: `Las ventas están ${Math.abs(diferencia).toFixed(0)}% por debajo del día anterior`
+            });
+        } else if (diferencia > 20) {
+            alertasArray.push({
+                tipo: 'success',
+                icono: '🎉',
+                mensaje: `¡Excelente! Las ventas aumentaron ${diferencia.toFixed(0)}% respecto a ayer`
+            });
+        }
+    }
+    
+    // Alerta: Día sin ventas
+    if (datosHoy.numTransacciones === 0) {
+        alertasArray.push({
+            tipo: 'info',
+            icono: 'ℹ️',
+            mensaje: 'No hay transacciones registradas para este día'
+        });
+    }
+    
+    // Alerta: Muy pocas transacciones pero ventas altas
+    if (datosHoy.numTransacciones > 0 && datosHoy.numTransacciones < 5 && datosHoy.ventasTotales > 1000) {
+        alertasArray.push({
+            tipo: 'info',
+            icono: '📊',
+            mensaje: `Ticket promedio muy alto: $${(datosHoy.ventasTotales / datosHoy.numTransacciones).toFixed(2)}`
+        });
+    }
+    
+    // Renderizar alertas
+    alertasArray.forEach(alerta => {
+        const alertaDiv = document.createElement('div');
+        alertaDiv.className = `alerta-item ${alerta.tipo}`;
+        alertaDiv.innerHTML = `
+            <span class="alerta-icon">${alerta.icono}</span>
+            <span class="alerta-texto">${alerta.mensaje}</span>
+        `;
+        alertas.appendChild(alertaDiv);
+    });
+}
