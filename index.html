@@ -18,10 +18,10 @@
             </div>
             <h3 style="margin-bottom: 15px; text-align:center;">Selecciona con qué paga:</h3>
             <div class="billetes-grid">
-                <!-- Los billetes se renderizan dinámicamente por JS -->
+                <!-- Los billetes se renderizan dinÃ¡micamente por JS -->
             </div>
             <div class="monedas-row">
-                <!-- Las monedas se renderizan dinámicamente por JS -->
+                <!-- Las monedas se renderizan dinÃ¡micamente por JS -->
             </div>
             <div class="monto-recibido-display">
                 <label>Monto recibido: <strong>$<span id="pantallaEfectivoRecibido">0.00</span></strong></label>
@@ -38,7 +38,6 @@
         <header>
             <h1>🥖 Registro de Ventas - Panadería</h1>
             <p class="fecha" id="fecha"></p>
-           
         </header>
 
         <div class="main-content">
@@ -68,9 +67,9 @@
                 </div>
 
                 <div class="operaciones">
-                    <h2>💼 Operaciones</h2>
-                    <button class="btn-admin" onclick="abrirModalVentaManual()">💰 Venta Manual</button>
-                    <button class="btn-admin" onclick="abrirModalRetiro()">💸 Retirar Efectivo</button>
+                    <h2>💴 Operaciones</h2>
+                    <button class="btn-admin" onclick="abrirModalVentaManual()">💸 Venta Manual</button>
+                    <button class="btn-admin" onclick="abrirModalRetiro()">💶 Retirar Efectivo</button>
                     <button class="btn-admin" onclick="abrirModalIngreso()">💵 Ingresar Efectivo</button>
                 </div>
 
@@ -92,12 +91,13 @@
         <canvas id="reporteChart" width="800" height="400"></canvas>
     </div>
     <div id="modalReporte" class="modal hidden">
-        <div class="modal-content modal-reporte">
+        <div class="modal-content modal-reporte-mejorado">
             <div class="modal-header">
-                <h2>📊 Reporte Semanal</h2>
+                <h2>📊 Análisis de Ventas</h2>
                 <span class="modal-close" onclick="cerrarModalReporte()">&times;</span>
             </div>
             <div class="modal-body">
+                <!-- Navegación de fecha -->
                 <div class="reporte-header">
                     <div class="navegacion-fecha">
                         <button class="btn-fecha-nav" onclick="cambiarDiaReporte(-1)">◀</button>
@@ -105,40 +105,148 @@
                         <button class="btn-fecha-nav" onclick="cambiarDiaReporte(1)">▶</button>
                     </div>
                 </div>
-                
-                <div class="reporte-seccion">
-                    <h4>Productos Vendidos</h4>
-                    <div id="reporteProductos" class="reporte-productos"></div>
+
+                <!-- Pestañas de navegación -->
+                <div class="reporte-tabs">
+                    <button class="reporte-tab active" onclick="cambiarTabReporte('resumen')">📋 Resumen</button>
+                    <button class="reporte-tab" onclick="cambiarTabReporte('graficos')">📈 Gráficos</button>
+                    <button class="reporte-tab" onclick="cambiarTabReporte('comparativa')">⚖️ Comparativa</button>
+                    <button class="reporte-tab" onclick="cambiarTabReporte('detalles')">📝 Detalles</button>
                 </div>
-                
-                <div class="reporte-seccion">
-                    <h4>Resumen de Ventas</h4>
-                    <div class="reporte-resumen">
-                        <div class="resumen-item">
-                            <span>💳 Ventas con Tarjeta:</span>
-                            <strong>$<span id="reporteTarjeta">0.00</span></strong>
+
+                <!-- TAB: Resumen -->
+                <div id="tabResumen" class="reporte-tab-content active">
+                    <!-- Cards de métricas principales -->
+                    <div class="metricas-grid">
+                        <div class="metrica-card">
+                            <div class="metrica-icon">💰</div>
+                            <div class="metrica-info">
+                                <span class="metrica-label">Total del Día</span>
+                                <span class="metrica-valor">$<span id="metricaTotal">0.00</span></span>
+                                <span class="metrica-cambio" id="metricaTotalCambio"></span>
+                            </div>
                         </div>
-                        <div class="resumen-item">
-                            <span>💵 Ventas en Efectivo:</span>
-                            <strong>$<span id="reporteEfectivo">0.00</span></strong>
+                        <div class="metrica-card">
+                            <div class="metrica-icon">🧾</div>
+                            <div class="metrica-info">
+                                <span class="metrica-label">Transacciones</span>
+                                <span class="metrica-valor"><span id="metricaTransacciones">0</span></span>
+                                <span class="metrica-cambio" id="metricaTransaccionesCambio"></span>
+                            </div>
                         </div>
-                        <div class="resumen-item resumen-total">
-                            <span>💰 Total de la Semana:</span>
-                            <strong class="total-amount">$<span id="reporteTotalModal">0.00</span></strong>
+                        <div class="metrica-card">
+                            <div class="metrica-icon">📊</div>
+                            <div class="metrica-info">
+                                <span class="metrica-label">Ticket Promedio</span>
+                                <span class="metrica-valor">$<span id="metricaTicketPromedio">0.00</span></span>
+                                <span class="metrica-cambio" id="metricaTicketPromedioCambio"></span>
+                            </div>
                         </div>
-                        <div class="resumen-item">
-                            <span>🧾 Transacciones:</span>
-                            <strong><span id="reporteTransaccionesModal">0</span></strong>
+                        <div class="metrica-card">
+                            <div class="metrica-icon">⭐</div>
+                            <div class="metrica-info">
+                                <span class="metrica-label">Más Vendido</span>
+                                <span class="metrica-valor-small" id="metricaMasVendido">-</span>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Resumen de ventas -->
+                    <div class="reporte-seccion">
+                        <h4>💳 Métodos de Pago</h4>
+                        <div class="metodos-pago-visual">
+                            <div class="metodo-pago-item">
+                                <div class="metodo-header">
+                                    <span>💳 Tarjeta</span>
+                                    <strong>$<span id="reporteTarjeta">0.00</span></strong>
+                                </div>
+                                <div class="metodo-barra">
+                                    <div class="metodo-barra-fill tarjeta" id="barraTarjeta" style="width: 0%"></div>
+                                </div>
+                                <span class="metodo-porcentaje" id="porcentajeTarjeta">0%</span>
+                            </div>
+                            <div class="metodo-pago-item">
+                                <div class="metodo-header">
+                                    <span>💵 Efectivo</span>
+                                    <strong>$<span id="reporteEfectivo">0.00</span></strong>
+                                </div>
+                                <div class="metodo-barra">
+                                    <div class="metodo-barra-fill efectivo" id="barraEfectivo" style="width: 0%"></div>
+                                </div>
+                                <span class="metodo-porcentaje" id="porcentajeEfectivo">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top productos -->
+                    <div class="reporte-seccion">
+                        <h4>🏆 Top 5 Productos Más Vendidos</h4>
+                        <div id="topProductos" class="top-productos"></div>
+                    </div>
+
+                    <!-- Retiros -->
+                    <div class="reporte-seccion">
+                        <h4>💸 Retiros de Efectivo</h4>
+                        <div id="reporteRetiros" class="reporte-retiros"></div>
+                    </div>
                 </div>
-                
-                <div class="reporte-seccion">
-                    <h4>💸 Retiros de Efectivo</h4>
-                    <div id="reporteRetiros" class="reporte-retiros"></div>
+
+                <!-- TAB: Gráficos -->
+                <div id="tabGraficos" class="reporte-tab-content">
+                    <div class="reporte-seccion">
+                        <h4>📊 Ventas por Hora</h4>
+                        <canvas id="chartVentasPorHora"></canvas>
+                    </div>
+                    
+                    <div class="reporte-seccion">
+                        <h4>📈 Tendencia Semanal</h4>
+                        <canvas id="chartTendenciaSemanal"></canvas>
+                    </div>
+
+                    <div class="reporte-seccion">
+                        <h4>🥧 Distribución de Ventas</h4>
+                        <canvas id="chartDistribucion"></canvas>
+                    </div>
                 </div>
+
+                <!-- TAB: Comparativa -->
+                <div id="tabComparativa" class="reporte-tab-content">
+                    <div class="comparativa-selector">
+                        <label>Comparar con:</label>
+                        <select id="comparativaSelector" onchange="actualizarComparativa()">
+                            <option value="ayer">Día anterior</option>
+                            <option value="semana-pasada">Mismo día semana pasada</option>
+                            <option value="promedio-semana">Promedio de la semana</option>
+                        </select>
+                    </div>
+
+                    <div class="comparativa-grid" id="comparativaGrid">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+
+                    <div class="reporte-seccion">
+                        <h4>📊 Comparación Visual</h4>
+                        <canvas id="chartComparativa"></canvas>
+                    </div>
+                </div>
+
+                <!-- TAB: Detalles -->
+                <div id="tabDetalles" class="reporte-tab-content">
+                    <div class="reporte-seccion">
+                        <h4>📦 Todos los Productos Vendidos</h4>
+                        <div id="reporteProductos" class="reporte-productos-detallado"></div>
+                    </div>
+
+                    <div class="reporte-seccion">
+                        <h4>🕐 Historial de Transacciones</h4>
+                        <div id="historialTransacciones" class="historial-transacciones"></div>
+                    </div>
+                </div>
+
+                <!-- Alertas -->
+                <div id="alertasReporte" class="alertas-reporte"></div>
                 
-                <button class="btn-descargar-modal" onclick="descargarReporte()">Descargar Reporte con Detalles</button>
+                <button class="btn-descargar-modal" onclick="descargarReporte()">📥 Descargar Reporte Completo</button>
             </div>
         </div>
     </div>
@@ -247,7 +355,7 @@
     <div id="modalVentaManual" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>💰 Venta Manual</h2>
+                <h2>ðŸ’° Venta Manual</h2>
                 <span class="modal-close" onclick="cerrarModalVentaManual()">&times;</span>
             </div>
             <div class="modal-body">
@@ -258,8 +366,8 @@
                 <div class="form-group">
                     <label>Método de pago:</label>
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('tarjeta')" style="flex: 1;">💳 Tarjeta</button>
-                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('efectivo')" style="flex: 1;">💵 Efectivo</button>
+                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('tarjeta')" style="flex: 1;">ðŸ’³ Tarjeta</button>
+                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('efectivo')" style="flex: 1;">ðŸ’µ Efectivo</button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -274,14 +382,14 @@
     <div id="modalRetiro" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>💸 Retirar Efectivo</h2>
+                <h2>💶 Retirar Efectivo</h2>
                 <span class="modal-close" onclick="cerrarModalRetiro()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Operaciones Rápidas:</label>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
-                        <!-- Los botones se cargan dinámicamente desde JavaScript -->
+                        <!-- Los botones se cargan dinÃ¡micamente desde JavaScript -->
                     </div>
                 </div>
                 <div class="form-group">
@@ -300,7 +408,7 @@
         </div>
     </div>
 
-    <!-- Modal Configuración de Operaciones -->
+    <!-- Modal ConfiguraciÃ³n de Operaciones -->
     <div id="modalConfigOperaciones" class="modal hidden">
         <div class="modal-content modal-grande">
             <div class="modal-header">
@@ -311,7 +419,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                     <!-- Retiros -->
                     <div>
-                        <h3 style="margin-bottom: 15px; color: #d9534f;">💸 Operaciones de Retiro</h3>
+                        <h3 style="margin-bottom: 15px; color: #d9534f;">💶 Operaciones de Retiro</h3>
                         <button class="btn-admin" onclick="mostrarFormularioOperacion('retiro')" style="width: 100%; margin-bottom: 15px;">+ Agregar Retiro</button>
                         <div id="listaOperacionesRetiro" class="lista-operaciones"></div>
                     </div>
@@ -324,7 +432,7 @@
                     </div>
                 </div>
                 
-                <!-- Formulario de operación -->
+                <!-- Formulario de operaciÃ³n -->
                 <div id="formularioOperacion" class="hidden" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e5e7eb;">
                     <h3 id="tituloOperacionForm">Nueva Operación</h3>
                     <input type="hidden" id="operacionIdEdit">
@@ -360,7 +468,7 @@
                 <div class="form-group">
                     <label>Operaciones Rápidas:</label>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
-                        <!-- Los botones se cargan dinámicamente desde JavaScript -->
+                        <!-- Los botones se cargan dinÃ¡micamente desde JavaScript -->
                     </div>
                 </div>
                 <div class="form-group">
@@ -382,7 +490,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js?v=2"></script>
     <script>
-    // --- Orden y renderizado dinámico de billetes y monedas con drag & drop ---
+    // --- Orden y renderizado dinÃ¡mico de billetes y monedas con drag & drop ---
     const denominacionesBilletes = [500, 200, 100, 50, 20];
     const denominacionesMonedas = [10, 5, 2, 1];
 
