@@ -1,3 +1,54 @@
+/* Mejorar tabla principal del reporte para uniformidad visual */
+#modalReporte .win-table:first-of-type th,
+#modalReporte .win-table:first-of-type td {
+    text-align: center;
+    padding: 7px 10px;
+    border: 1px solid #d0d0d0;
+}
+#modalReporte .win-table:first-of-type tr {
+    background: #f8f8f8;
+}
+#modalReporte .win-table:first-of-type tr:nth-child(even) {
+    background: #fff;
+}
+#modalReporte .win-table:first-of-type th {
+    background: #e0e0e0;
+    font-weight: bold;
+    border-bottom: 2px solid #b0b0b0;
+}
+/* --- Reporte visual: tablas y gráfica --- */
+#modalReporte .win-table {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+#modalReporte .win-table th, #modalReporte .win-table td {
+    padding: 6px 8px;
+    text-align: center;
+}
+#modalReporte .win-table th {
+    background: #e0e0e0;
+    font-weight: bold;
+    border-bottom: 2px solid #b0b0b0;
+}
+#modalReporte .win-table tbody tr:nth-child(even) {
+    background: #f8f8f8;
+}
+#modalReporte .win-table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+#modalReporte .win-table td {
+    border: 1px solid #d0d0d0;
+}
+#modalReporte .win-content strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #333;
+}
+#reporteVentasPorHoraGrafica {
+    margin: 10px 0 0 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
 /* Fondo de modal para permitir cierre al hacer clic fuera */
 .modal-backdrop {
     position: fixed;
