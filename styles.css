@@ -1,3 +1,58 @@
+/* --- WIN95 LOOK & FEEL ENHANCEMENTS --- */
+.win-window, .win-inset, .win-outset, .win-btn, .win-table, .modal-content {
+    box-shadow: 2px 2px 0 #808080, 4px 4px 0 #fff, 6px 6px 0 #808080;
+    border-radius: 0 !important;
+}
+.win-title-bar {
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #000;
+    border-right: 2px solid #000;
+    font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 0 #000, 0 1px 0 #000;
+}
+.win-btn {
+    font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(180deg, #e0e0e0 0%, #c0c0c0 100%);
+    color: #222;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #fff #808080 #808080 #fff;
+    box-shadow: 1px 1px 0 #000;
+    border-radius: 0;
+    transition: none;
+}
+.win-btn:active {
+    border-color: #808080 #fff #fff #808080;
+    background: linear-gradient(180deg, #c0c0c0 0%, #e0e0e0 100%);
+    color: #000;
+}
+.win-table {
+    font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 0;
+    border: 2px solid #000;
+    background: #fff;
+}
+.win-table th, .win-table td {
+    border-radius: 0 !important;
+}
+.win-inset {
+    background: #f8f8f8;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #808080 #fff #fff #808080;
+}
+.win-outset {
+    background: #e0e0e0;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #fff #808080 #808080 #fff;
+}
+.modal-content {
+    border: 2px solid #000;
+    background: #c0c0c0;
+}
 /* Mejorar tabla principal del reporte para uniformidad visual */
 #modalReporte .win-table:first-of-type th,
 #modalReporte .win-table:first-of-type td {
