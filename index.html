@@ -1,561 +1,398 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-MX">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Ventas - Panadería</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TPV Panadería - Windows 95 Edition</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Chart.js para gráficos en el reporte -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-</head>
-<body>
-    <!-- Sección de cobro en efectivo tipo pantalla completa FUERA del contenedor principal -->
-    <div id="pantallaEfectivo" class="pantalla-efectivo hidden">
-        <div class="efectivo-container pantalla-efectivo-container">
-            <div class="efectivo-header">
-                <h2>💵 Cobro en Efectivo</h2>
-                <div class="efectivo-total">Total a pagar: <span id="pantallaEfectivoTotal">$0.00</span></div>
-            </div>
-            <h3 style="margin-bottom: 15px; text-align:center;">Selecciona con qué paga:</h3>
-            <div class="billetes-grid">
-                <!-- Los billetes se renderizan dinÃ¡micamente por JS -->
-            </div>
-            <div class="monedas-row">
-                <!-- Las monedas se renderizan dinÃ¡micamente por JS -->
-            </div>
-            <div class="monto-recibido-display">
-                <label>Monto recibido: <strong>$<span id="pantallaEfectivoRecibido">0.00</span></strong></label>
-                <button class="btn-resetear" onclick="pantallaEfectivoReset()">Limpiar</button>
-            </div>
-            <div class="cambio-modal">
-                <h3>Cambio: <span id="pantallaEfectivoCambio">0.00</span></h3>
-            </div>
-            <button class="btn-cerrar-venta" onclick="pantallaEfectivoConfirmar()">Cerrar Venta</button>
-            <button class="btn-cancelar" onclick="pantallaEfectivoCancelar()" style="margin-top:10px;">Cancelar</button>
-        </div>
-    </div>
-    <div class="container" id="mainContainer">
-        <header>
-            <h1>🥖 Registro de Ventas - Panadería</h1>
-            <p class="fecha" id="fecha"></p>
-        </header>
-
-        <div class="main-content">
-            <!-- Productos -->
-            <section class="productos-section">
-                <div id="categoriasTabs" class="categorias-tabs"></div>
-                <div class="productos-grid" id="productosGrid"></div>
-            </section>
-
-            <!-- Carrito y Pago -->
-            <section class="carrito-section">
-                <div class="carrito">
-                    <h2>Carrito de Compra</h2>
-                    <div id="carritoItems" class="carrito-items"></div>
-                    <div class="carrito-total">
-                        <h3>Total: $<span id="totalCarrito">0.00</span></h3>
-                    </div>
-                    <button class="btn-limpiar" onclick="limpiarCarrito()">Limpiar Carrito</button>
-                </div>
-
-                <div class="pago">
-                    <h2>Método de Pago</h2>
-                    <div class="metodo-pago">
-                        <button class="btn-pago" onclick="seleccionarMetodo('tarjeta')">💳 Tarjeta</button>
-                        <button class="btn-pago" onclick="seleccionarMetodo('efectivo')">💵 Efectivo</button>
-                    </div>
-                </div>
-
-                <div class="operaciones">
-                    <h2>💴 Operaciones</h2>
-                    <button class="btn-admin" onclick="abrirModalVentaManual()">💸 Venta Manual</button>
-                    <button class="btn-admin" onclick="abrirModalRetiro()">💶 Retirar Efectivo</button>
-                    <button class="btn-admin" onclick="abrirModalIngreso()">💵 Ingresar Efectivo</button>
-                </div>
-
-                <div class="admin">
-                    <h2>⚙️ Administración</h2>
-                    <button class="btn-admin" onclick="abrirModalProductos()">Ver Productos</button>
-                    <button class="btn-admin" onclick="abrirModalReporte()">Ver Reporte</button>
-                    <button class="btn-admin" onclick="abrirModalConfigOperaciones()">⚡ Configurar Operaciones</button>
-                    <button class="btn-admin" id="btnReordenar" onclick="toggleModoReordenar()">🔀 Reordenar Productos</button>
-                </div>
-            </section>
-        </div>
-    </div>
-
-    <!-- Modal Reporte -->
-
-    <!-- Canvas oculto para generar gráficos del reporte -->
-    <div style="position: absolute; left: -9999px; top: -9999px; width: 800px; height: 400px;">
-        <canvas id="reporteChart" width="800" height="400"></canvas>
-    </div>
-    <div id="modalReporte" class="modal hidden">
-        <div class="modal-content modal-reporte-mejorado">
-            <div class="modal-header">
-                <h2>📊 Análisis de Ventas</h2>
-                <span class="modal-close" onclick="cerrarModalReporte()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <!-- Navegación de fecha -->
-                <div class="reporte-header">
-                    <div class="navegacion-fecha">
-                        <button class="btn-fecha-nav" onclick="cambiarDiaReporte(-1)">◀</button>
-                        <h3 id="reporteFechaModal"></h3>
-                        <button class="btn-fecha-nav" onclick="cambiarDiaReporte(1)">▶</button>
-                    </div>
-                </div>
-
-                <!-- Pestañas de navegación -->
-                <div class="reporte-tabs">
-                    <button class="reporte-tab active" onclick="cambiarTabReporte('resumen')">📋 Resumen</button>
-                    <button class="reporte-tab" onclick="cambiarTabReporte('graficos')">📈 Gráficos</button>
-                    <button class="reporte-tab" onclick="cambiarTabReporte('comparativa')">⚖️ Comparativa</button>
-                    <button class="reporte-tab" onclick="cambiarTabReporte('detalles')">📝 Detalles</button>
-                </div>
-
-
-                <!-- TAB: Resumen -->
-                <div id="tabResumen" class="reporte-tab-content active">
-                    <!-- Cards de métricas principales -->
-                    <div class="metricas-grid">
-                        <div class="metrica-card">
-                            <div class="metrica-icon">💰</div>
-                            <div class="metrica-info">
-                                <span class="metrica-label">Total del Día</span>
-                                <span class="metrica-valor">$<span id="metricaTotal">0.00</span></span>
-                                <span class="metrica-cambio" id="metricaTotalCambio"></span>
-                            </div>
-                        </div>
-                        <div class="metrica-card">
-                            <div class="metrica-icon">🧾</div>
-                            <div class="metrica-info">
-                                <span class="metrica-label">Transacciones</span>
-                                <span class="metrica-valor"><span id="metricaTransacciones">0</span></span>
-                                <span class="metrica-cambio" id="metricaTransaccionesCambio"></span>
-                            </div>
-                        </div>
-                        <div class="metrica-card">
-                            <div class="metrica-icon">📊</div>
-                            <div class="metrica-info">
-                                <span class="metrica-label">Ticket Promedio</span>
-                                <span class="metrica-valor">$<span id="metricaTicketPromedio">0.00</span></span>
-                                <span class="metrica-cambio" id="metricaTicketPromedioCambio"></span>
-                            </div>
-                        </div>
-                        <div class="metrica-card">
-                            <div class="metrica-icon">⭐</div>
-                            <div class="metrica-info">
-                                <span class="metrica-label">Más Vendido</span>
-                                <span class="metrica-valor-small" id="metricaMasVendido">-</span>
-                            </div>
-                        </div>
-                    </div>
-
-               
-                    <!-- Resumen de ventas -->
-                    <div class="reporte-seccion">
-                        <h4>💳 Métodos de Pago</h4>
-                        <div class="metodos-pago-visual">
-                            <div class="metodo-pago-item">
-                                <div class="metodo-header">
-                                    <span>💳 Tarjeta</span>
-                                    <strong>$<span id="reporteTarjeta">0.00</span></strong>
-                                </div>
-                                <div class="metodo-barra">
-                                    <div class="metodo-barra-fill tarjeta" id="barraTarjeta" style="width: 0%"></div>
-                                </div>
-                                <span class="metodo-porcentaje" id="porcentajeTarjeta">0%</span>
-                            </div>
-                            <div class="metodo-pago-item">
-                                <div class="metodo-header">
-                                    <span>💵 Efectivo</span>
-                                    <strong>$<span id="reporteEfectivo">0.00</span></strong>
-                                </div>
-                                <div class="metodo-barra">
-                                    <div class="metodo-barra-fill efectivo" id="barraEfectivo" style="width: 0%"></div>
-                                </div>
-                                <span class="metodo-porcentaje" id="porcentajeEfectivo">0%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Top productos -->
-                    <div class="reporte-seccion">
-                        <h4>🏆 Top 5 Productos Más Vendidos</h4>
-                        <div id="topProductos" class="top-productos"></div>
-                    </div>
-
-                    <!-- Retiros -->
-                    <div class="reporte-seccion">
-                        <h4>💸 Retiros de Efectivo</h4>
-                        <div id="reporteRetiros" class="reporte-retiros"></div>
-                    </div>
-                </div>
-
-                <!-- TAB: Gráficos -->
-                <div id="tabGraficos" class="reporte-tab-content">
-                    <div class="reporte-seccion">
-                        <h4>📊 Ventas por Hora</h4>
-                        <canvas id="chartVentasPorHora"></canvas>
-                    </div>
-                    
-                    <div class="reporte-seccion">
-                        <h4>📈 Tendencia Semanal</h4>
-                        <canvas id="chartTendenciaSemanal"></canvas>
-                    </div>
-
-                    <div class="reporte-seccion">
-                        <h4>🥧 Distribución de Ventas</h4>
-                        <canvas id="chartDistribucion"></canvas>
-                    </div>
-                </div>
-
-                <!-- TAB: Comparativa -->
-                <div id="tabComparativa" class="reporte-tab-content">
-                    <div class="comparativa-selector">
-                        <label>Comparar con:</label>
-                        <select id="comparativaSelector" onchange="actualizarComparativa()">
-                            <option value="ayer">Día anterior</option>
-                            <option value="semana-pasada">Mismo día semana pasada</option>
-                            <option value="promedio-semana">Promedio de la semana</option>
-                        </select>
-                    </div>
-
-                    <div class="comparativa-grid" id="comparativaGrid">
-                        <!-- Se llena dinámicamente -->
-                    </div>
-
-                    <div class="reporte-seccion">
-                        <h4>📊 Comparación Visual</h4>
-                        <canvas id="chartComparativa"></canvas>
-                    </div>
-                </div>
-
-                <!-- TAB: Detalles -->
-                <div id="tabDetalles" class="reporte-tab-content">
-                    <div class="reporte-seccion">
-                        <h4>📦 Todos los Productos Vendidos</h4>
-                        <div id="reporteProductos" class="reporte-productos-detallado"></div>
-                    </div>
-
-                    <div class="reporte-seccion">
-                        <h4>🕐 Historial de Transacciones</h4>
-                        <div id="historialTransacciones" class="historial-transacciones"></div>
-                    </div>
-                </div>
-
-                <!-- Alertas -->
-                <div id="alertasReporte" class="alertas-reporte"></div>
-                
-                <button class="btn-descargar-modal" onclick="descargarReporte()">📥 Descargar Reporte Completo</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Productos -->
-    <div id="modalProductos" class="modal hidden">
-        <div class="modal-content modal-productos">
-            <div class="modal-header">
-                <h2>📦 Base de Datos de Productos</h2>
-                <span class="modal-close" onclick="cerrarModalProductos()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                    <button class="btn-agregar-producto" onclick="mostrarFormularioProducto()">+ Agregar Producto</button>
-                    <button class="btn-agregar-producto" onclick="toggleGestionCategorias()">⚙️ Gestionar Categorías</button>
-                    <button class="btn-agregar-producto" onclick="document.getElementById('csvInput').click()">📄 Importar CSV</button>
-                    <input type="file" id="csvInput" accept=".csv" style="display: none;" onchange="importarCSV(event)">
-                </div>
-                
-                <!-- Gestión de Categorías -->
-                <div id="gestionCategorias" class="gestion-categorias hidden">
-                    <h3 style="margin-bottom: 15px;">Gestión de Categorías</h3>
-                    
-                    <div id="formularioCategoria" class="formulario-producto hidden">
-                        <h4 id="tituloCategoriaForm">Nueva Categoría</h4>
-                        <input type="hidden" id="categoriaKeyEdit">
-                        <div class="form-group">
-                            <label>Nombre:</label>
-                            <input type="text" id="categoriaNombre" placeholder="ej: Postres">
-                        </div>
-                        <div class="form-group">
-                            <label>Color:</label>
-                            <input type="color" id="categoriaColor" value="#9b59b6">
-                        </div>
-                        <div class="form-buttons">
-                            <button class="btn-cancelar" onclick="cancelarFormularioCategoria()">Cancelar</button>
-                            <button class="btn-guardar" onclick="guardarCategoria()">Guardar</button>
-                        </div>
-                    </div>
-                    
-                    <button class="btn-agregar-producto" onclick="mostrarFormularioCategoria()" style="margin-bottom: 15px;">+ Nueva Categoría</button>
-                    
-                    <div class="categorias-lista" id="categoriasLista"></div>
-                    <hr style="margin: 20px 0; border: 1px solid #eee;">
-                </div>
-                
-                <div id="formularioProducto" class="formulario-producto hidden">
-                    <h4 id="tituloFormulario">Nuevo Producto</h4>
-                    <input type="hidden" id="productoIdEdit">
-                    <div class="form-group">
-                        <label>Nombre:</label>
-                        <input type="text" id="productoNombre" placeholder="Nombre del producto">
-                    </div>
-                    <div class="form-group">
-                        <label>Precio:</label>
-                        <input type="tel" id="productoPrecio" placeholder="0.00" pattern="[0-9.]*">
-                    </div>
-                    <div class="form-group">
-                        <label>Categoría:</label>
-                        <select id="productoCategoria">
-                            <option value="bebidas">Bebidas</option>
-                            <option value="panDulce">Pan Dulce</option>
-                            <option value="panBlanco">Pan Blanco</option>
-                            <option value="hogazas">Hogazas / Baguette</option>
-                        </select>
-                    </div>
-                    <div class="form-buttons">
-                        <button class="btn-cancelar" onclick="cancelarFormulario()">Cancelar</button>
-                        <button class="btn-guardar" onclick="guardarProducto()">Guardar</button>
-                    </div>
-                </div>
-                
-                <div class="productos-lista" id="productosLista"></div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Modal Cambio -->
-    <div id="modalCambio" class="modal hidden">
-        <div class="modal-content modal-cambio">
-            <div class="modal-body">
-                <div class="cambio-info">
-                    <h2 style="text-align: center; color: #28a745; margin-bottom: 20px;">✅ Venta Completada</h2>
-                    <div class="cambio-item">
-                        <span>Total:</span>
-                        <strong>$<span id="cambioTotal">0.00</span></strong>
-                    </div>
-                    <div class="cambio-item">
-                        <span>Recibido:</span>
-                        <strong>$<span id="cambioRecibido">0.00</span></strong>
-                    </div>
-                    <div class="cambio-item cambio-final">
-                        <span>Cambio:</span>
-                        <strong class="cambio-amount">$<span id="cambioMonto">0.00</span></strong>
-                    </div>
-                </div>
-                <p style="text-align: center; color: #666; margin-top: 15px; font-size: 14px;">
-                    Cerrando automáticamente...
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Venta Manual -->
-    <div id="modalVentaManual" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>ðŸ’° Venta Manual</h2>
-                <span class="modal-close" onclick="cerrarModalVentaManual()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Monto de la venta:</label>
-                    <input type="tel" id="montoVentaManual" placeholder="0.00" pattern="[0-9.]*" autofocus>
-                </div>
-                <div class="form-group">
-                    <label>Método de pago:</label>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('tarjeta')" style="flex: 1;">ðŸ’³ Tarjeta</button>
-                        <button class="btn-pago" onclick="seleccionarMetodoVentaManual('efectivo')" style="flex: 1;">ðŸ’µ Efectivo</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Descripción (opcional):</label>
-                    <textarea id="descripcionVentaManual" placeholder="Ej: Producto especial, pedido personalizado, etc." rows="2"></textarea>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Retiro -->
-    <div id="modalRetiro" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>💶 Retirar Efectivo</h2>
-                <span class="modal-close" onclick="cerrarModalRetiro()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Operaciones Rápidas:</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
-                        <!-- Los botones se cargan dinÃ¡micamente desde JavaScript -->
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Monto a retirar:</label>
-                    <input type="tel" id="montoRetiro" placeholder="0.00" pattern="[0-9.]*">
-                </div>
-                <div class="form-group">
-                    <label>Justificación:</label>
-                    <textarea id="justificacionRetiro" placeholder="Ej: Compra de insumos, pago a proveedor, etc." rows="3"></textarea>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="btn-cancelar" onclick="cerrarModalRetiro()" style="flex: 1;">Cancelar</button>
-                    <button class="btn-guardar" onclick="confirmarRetiro()" style="flex: 1;">Confirmar Retiro</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal ConfiguraciÃ³n de Operaciones -->
-    <div id="modalConfigOperaciones" class="modal hidden">
-        <div class="modal-content modal-grande">
-            <div class="modal-header">
-                <h2>⚡ Configurar Operaciones Rápidas</h2>
-                <span class="modal-close" onclick="cerrarModalConfigOperaciones()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                    <!-- Retiros -->
-                    <div>
-                        <h3 style="margin-bottom: 15px; color: #d9534f;">💶 Operaciones de Retiro</h3>
-                        <button class="btn-admin" onclick="mostrarFormularioOperacion('retiro')" style="width: 100%; margin-bottom: 15px;">+ Agregar Retiro</button>
-                        <div id="listaOperacionesRetiro" class="lista-operaciones"></div>
-                    </div>
-                    
-                    <!-- Ingresos -->
-                    <div>
-                        <h3 style="margin-bottom: 15px; color: #28a745;">💵 Operaciones de Ingreso</h3>
-                        <button class="btn-admin" onclick="mostrarFormularioOperacion('ingreso')" style="width: 100%; margin-bottom: 15px;">+ Agregar Ingreso</button>
-                        <div id="listaOperacionesIngreso" class="lista-operaciones"></div>
-                    </div>
-                </div>
-                
-                <!-- Formulario de operaciÃ³n -->
-                <div id="formularioOperacion" class="hidden" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e5e7eb;">
-                    <h3 id="tituloOperacionForm">Nueva Operación</h3>
-                    <input type="hidden" id="operacionIdEdit">
-                    <input type="hidden" id="operacionTipoEdit">
-                    
-                    <div class="form-group">
-                        <label>Emoji:</label>
-                        <input type="text" id="operacionEmoji" placeholder="🗑️" maxlength="2" style="font-size: 24px; text-align: center;">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Nombre:</label>
-                        <input type="text" id="operacionNombre" placeholder="Ej: Basura, Gas, Préstamo">
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button class="btn-cancelar" onclick="cancelarFormularioOperacion()" style="flex: 1;">Cancelar</button>
-                        <button class="btn-guardar" onclick="guardarOperacion()" style="flex: 1;">Guardar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Ingreso -->
-    <div id="modalIngreso" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>💵 Ingresar Efectivo</h2>
-                <span class="modal-close" onclick="cerrarModalIngreso()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Operaciones Rápidas:</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
-                        <!-- Los botones se cargan dinÃ¡micamente desde JavaScript -->
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Monto a ingresar:</label>
-                    <input type="tel" id="montoIngreso" placeholder="0.00" pattern="[0-9.]*">
-                </div>
-                <div class="form-group">
-                    <label>Concepto:</label>
-                    <textarea id="conceptoIngreso" placeholder="Ej: Fondo inicial de caja, préstamo personal, etc." rows="3"></textarea>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="btn-cancelar" onclick="cerrarModalIngreso()" style="flex: 1;">Cancelar</button>
-                    <button class="btn-guardar" onclick="confirmarIngreso()" style="flex: 1;">Confirmar Ingreso</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Supabase and jsPDF -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="app.js?v=2"></script>
+</head>
+
+<body>
+    <!-- Fullscreen Cash View -->
+    <div id="pantallaEfectivo" class="modal hidden modal-backdrop">
+        <div class="modal-content win-window">
+            <div class="win-title-bar">
+                <div class="win-title-text">💵 Cobro en Efectivo</div>
+            </div>
+            <div class="win-content">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2>Total: <span id="pantallaEfectivoTotal">$0.00</span></h2>
+                    <div class="win-inset" style="padding: 10px; font-size: 1.5rem; margin-bottom: 10px;">
+                        Recibido: $<span id="pantallaEfectivoRecibido">0.00</span>
+                    </div>
+                    <div style="color: green; font-weight: bold;">
+                        Cambio: $<span id="pantallaEfectivoCambio">0.00</span>
+                    </div>
+                </div>
+
+                <div class="billetes-grid"
+                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                    <!-- Dynamically filled -->
+                </div>
+                <div class="monedas-row"
+                    style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                    <!-- Dynamically filled -->
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="win-btn w-100" onclick="pantallaEfectivoReset()">Limpiar</button>
+                    <button class="win-btn w-100" style="background: #28a745; color: white;"
+                        onclick="pantallaEfectivoConfirmar()">Confirmar Venta</button>
+                    <button class="win-btn w-100" onclick="pantallaEfectivoCancelar()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="win-title-bar">
+                <div class="win-title-text">📁 Menú</div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="win-label">Operaciones</div>
+                <button class="win-btn menu-item active" onclick="mostrarSeccion('tpv')">🛒 Punto de Venta</button>
+                <button class="win-btn menu-item" onclick="abrirModalVentaManual()">💸 Venta Manual</button>
+                <button class="win-btn menu-item" onclick="abrirModalRetiro()">💶 Retirar Efectivo</button>
+                <button class="win-btn menu-item" onclick="abrirModalIngreso()">💵 Ingresar Efectivo</button>
+
+                <div class="win-label">Administración</div>
+                <button class="win-btn menu-item" onclick="abrirModalProductos()">📦 Catálogo</button>
+                <button class="win-btn menu-item" onclick="abrirModalReporte()">📊 Reportes</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="win-title-bar" style="margin-bottom: 10px;">
+                <div class="win-title-text">🥖 Registro de Ventas - Panadería</div>
+                <div id="fecha" style="font-size: 0.9rem;"></div>
+            </div>
+
+            <div class="tpv-grid">
+                <!-- Products Panel -->
+                <section class="products-panel">
+                    <div id="categoriasTabs" class="categorias-tabs"></div>
+                    <div id="productosGrid" class="productos-grid win-inset"></div>
+                </section>
+
+                <!-- Cart Panel -->
+                <aside class="cart-panel">
+                    <div class="win-window w-100" style="flex: 1; display: flex; flex-direction: column;">
+                        <div class="win-title-bar">
+                            <div class="win-title-text">🛒 Carrito</div>
+                        </div>
+                        <div class="win-content" style="flex: 1; display: flex; flex-direction: column;">
+                            <div id="carritoItems" class="carrito-items win-inset"></div>
+                            <div id="notificacion-container"></div>
+                            <div class="win-window mt-10" style="margin-bottom: 0;">
+                                <div class="win-content"
+                                    style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem;">
+                                    <span>TOTAL:</span>
+                                    <span>$<span id="totalCarrito">0.00</span></span>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px;">
+                                <button class="win-btn" onclick="seleccionarMetodo('tarjeta')">💳 Tarjeta</button>
+                                <button class="win-btn" onclick="seleccionarMetodo('efectivo')">💵 Efectivo</button>
+                            </div>
+                            <button class="win-btn w-100 mt-10" onclick="limpiarCarrito()">Borrar Todo</button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL VENTA MANUAL -->
+    <div id="modalVentaManual" class="modal hidden modal-backdrop">
+        <div class="modal-content win-window">
+            <div class="win-title-bar">
+                <div class="win-title-text">💰 Venta Manual</div>
+                <button class="win-btn" style="min-height: 20px; padding: 2px 6px;"
+                    onclick="cerrarModalVentaManual()">X</button>
+            </div>
+            <div class="win-content">
+                <div class="modal-flex">
+                    <div style="flex: 1;">
+                        <input type="text" id="montoVentaManual" class="win-input w-100"
+                            style="font-size: 1.5rem; height: 50px; text-align: right;" value="0" readonly>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                            <button class="win-btn" onclick="seleccionarMetodoVentaManual('tarjeta')">💳
+                                Tarjeta</button>
+                            <button class="win-btn" onclick="seleccionarMetodoVentaManual('efectivo')">💵
+                                Efectivo</button>
+                        </div>
+                    </div>
+                    <div class="win-numpad win-outset" id="numpadVentaManual">
+                        <!-- Filled by JS or static -->
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '7')">7</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '8')">8</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '9')">9</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '4')">4</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '5')">5</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '6')">6</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '1')">1</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '2')">2</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '3')">3</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '0')">0</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoVentaManual', '.')">.</button>
+                        <button class="win-btn numpad-btn red" onclick="numpadClear('montoVentaManual')">C</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PRODUCTOS -->
+    <div id="modalProductos" class="modal hidden modal-backdrop">
+        <div class="modal-content win-window" style="width: 500px;">
+            <div class="win-title-bar">
+                <div class="win-title-text">📦 Catálogo de Productos</div>
+                <button class="win-btn" style="min-height: 20px; padding: 2px 6px;"
+                    onclick="cerrarModalProductos()">X</button>
+            </div>
+            <div class="win-content">
+                <div class="win-window">
+                    <div class="win-content">
+                        <strong>Nueva Categoría:</strong><br><br>
+                        <input type="text" id="categoriaNombre" class="win-input w-100"
+                            placeholder="Nombre de Categoría">
+                        <button class="win-btn w-100 mt-10" onclick="guardarCategoria()">Añadir Categoría</button>
+                    </div>
+                </div>
+                <div class="win-window">
+                    <div class="win-content">
+                        <strong>Nuevo Producto:</strong><br><br>
+                        <input type="text" id="productoNombre" class="win-input w-100" placeholder="Nombre"
+                            style="margin-bottom: 5px;">
+                        <input type="number" id="productoPrecio" class="win-input w-100" placeholder="Precio"
+                            style="margin-bottom: 5px;">
+                        <select id="productoCategoriaSelect" class="win-input w-100">
+                            <!-- Dynamically filled -->
+                        </select>
+                        <button class="win-btn w-100 mt-10" onclick="guardarProducto()">Añadir Producto</button>
+                    </div>
+                </div>
+                <div id="productosLista" class="win-inset" style="max-height: 300px; overflow-y: auto; padding: 10px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RETIRO -->
+    <div id="modalRetiro" class="modal hidden modal-backdrop">
+        <div class="modal-content win-window">
+            <div class="win-title-bar">
+                <div class="win-title-text">💶 Retirar Efectivo</div>
+                <button class="win-btn" style="min-height: 20px; padding: 2px 6px;"
+                    onclick="cerrarModalRetiro()">X</button>
+            </div>
+            <div class="win-content">
+                <div class="modal-flex">
+                    <div style="flex: 1;">
+                        <input type="text" id="montoRetiro" class="win-input w-100"
+                            style="font-size: 1.5rem; height: 50px; text-align: right;" value="0" readonly>
+                        <div id="quickOpsRetiro" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;">
+                        </div>
+                        <textarea id="justificacionRetiro" class="win-input w-100"
+                            style="height: 60px; margin-top: 10px;" placeholder="Justificación"></textarea>
+                        <button class="win-btn w-100 mt-10" onclick="confirmarRetiro()">Confirmar Retiro</button>
+                    </div>
+                    <div class="win-numpad win-outset">
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '7')">7</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '8')">8</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '9')">9</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '4')">4</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '5')">5</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '6')">6</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '1')">1</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '2')">2</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '3')">3</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '0')">0</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoRetiro', '.')">.</button>
+                        <button class="win-btn numpad-btn red" onclick="numpadClear('montoRetiro')">C</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INGRESO -->
+    <div id="modalIngreso" class="modal hidden modal-backdrop">
+        <div class="modal-content win-window">
+            <div class="win-title-bar">
+                <div class="win-title-text">💵 Ingresar Efectivo</div>
+                <button class="win-btn" style="min-height: 20px; padding: 2px 6px;"
+                    onclick="cerrarModalIngreso()">X</button>
+            </div>
+            <div class="win-content">
+                <div class="modal-flex">
+                    <div style="flex: 1;">
+                        <input type="text" id="montoIngreso" class="win-input w-100"
+                            style="font-size: 1.5rem; height: 50px; text-align: right;" value="0" readonly>
+                        <div id="quickOpsIngreso" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;">
+                        </div>
+                        <textarea id="conceptoIngreso" class="win-input w-100" style="height: 60px; margin-top: 10px;"
+                            placeholder="Concepto"></textarea>
+                        <button class="win-btn w-100 mt-10" onclick="confirmarIngreso()">Confirmar Ingreso</button>
+                    </div>
+                    <div class="win-numpad win-outset">
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '7')">7</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '8')">8</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '9')">9</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '4')">4</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '5')">5</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '6')">6</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '1')">1</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '2')">2</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '3')">3</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '0')">0</button>
+                        <button class="win-btn numpad-btn" onclick="numpadInput('montoIngreso', '.')">.</button>
+                        <button class="win-btn numpad-btn red" onclick="numpadClear('montoIngreso')">C</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REPORTE -->
+    <div id="modalReporte" class="modal hidden modal-backdrop">
+        <div class="modal-content win-window" style="width: 650px; max-height: 80vh; overflow-y: auto;">
+            <div class="win-title-bar">
+                <div class="win-title-text">📊 Reporte Diario</div>
+                <button class="win-btn" style="min-height: 15px; padding: 2px 6px;"
+                    onclick="cerrarModalReporte()">X</button>
+            </div>
+            <div class="win-content">
+                <div style="text-align: center; margin-bottom: 5px;">
+                    <button class="win-btn" onclick="cambiarDiaReporte(-1)">◀</button>
+                    <span id="reporteFechaModal" style="margin: 0 5px; font-weight: bold;"></span>
+                    <button class="win-btn" onclick="cambiarDiaReporte(1)">▶</button>
+                </div>
+
+                <div class="win-window mt-10">
+                    <div class="win-content">
+                        <table class="win-table">
+                            <tr>
+                                <td>Ventas Totales:</td>
+                                <td id="reporteVentasTotales" style="text-align:right">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>- Efectivo:</td>
+                                <td id="reporteVentasEfectivo" style="text-align:right">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>- Tarjeta:</td>
+                                <td id="reporteVentasTarjeta" style="text-align:right">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Transacciones:</td>
+                                <td id="reporteNumTransacciones" style="text-align:right">0</td>
+                            </tr>
+                            <tr>
+                                <td>Ticket Promedio:</td>
+                                <td id="reporteTicketPromedio" style="text-align:right">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Productos Vendidos:</td>
+                                <td id="reporteProductosVendidos" style="text-align:right">0</td>
+                            </tr>
+                            <tr>
+                                <td>Producto Más Vendido:</td>
+                                <td id="reporteProductoMasVendido" style="text-align:right">-</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div style="margin-top:8px;">
+                                        <strong>Top 3 Productos:</strong>
+                                        <table id="tablaTopProductos" class="win-table" style="width:100%; font-size:0.95em; margin-top:4px;">
+                                            <thead><tr><th>Producto</th><th>Cantidad</th></tr></thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>% Efectivo / Tarjeta:</td>
+                                <td id="reportePorcentajeMetodos" style="text-align:right">0% / 0%</td>
+                            </tr>
+                            <tr>
+                                <td>Primera Venta:</td>
+                                <td id="reportePrimeraVenta" style="text-align:right">-</td>
+                            </tr>
+                            <tr>
+                                <td>Última Venta:</td>
+                                <td id="reporteUltimaVenta" style="text-align:right">-</td>
+                            </tr>
+                            <tr style="border-top: 1px solid #888;">
+                                <td>Ingresos Extra:</td>
+                                <td id="reporteTotalIngresos" style="text-align:right">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Retiros:</td>
+                                <td id="reporteTotalRetiros" style="text-align:right">$0.00</td>
+                            </tr>
+                            <tr style="font-weight:bold; border-top: 2px solid #000;">
+                                <td>Saldo en Caja:</td>
+                                <td id="reporteSaldoCaja" style="text-align:right">$0.00</td>
+                            </tr>
+                        </table>
+                        <div class="win-window mt-10">
+                            <div class="win-content">
+                                <strong>Ventas por Hora:</strong>
+                                <table id="tablaVentasPorHora" class="win-table" style="width:100%; font-size:0.95em; margin-top:4px;">
+                                    <thead><tr><th>Hora</th><th>Monto</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                                <div id="reporteVentasPorHoraGrafica" style="margin-top:8px;"></div>
+                            </div>
+                        </div>
+                        <div class="win-window mt-10">
+                            <div class="win-content">
+                                <strong>Detalle de Retiros:</strong>
+                                <div id="reporteDetalleRetiros" style="font-size: 0.95em; margin-top: 5px;"></div>
+                                <strong>Detalle de Ingresos:</strong>
+                                <div id="reporteDetalleIngresos" style="font-size: 0.95em; margin-top: 5px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="win-btn w-100 mt-10" onclick="descargarReporte()">📥 Descargar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
     <script>
-    // --- Orden y renderizado dinÃ¡mico de billetes y monedas con drag & drop ---
-    const denominacionesBilletes = [500, 200, 100, 50, 20];
-    const denominacionesMonedas = [10, 5, 2, 1];
-
-    function renderizarBilletesYMonedas() {
-        const billetesGrid = document.querySelector('.billetes-grid');
-        const monedasRow = document.querySelector('.monedas-row');
-        billetesGrid.innerHTML = '';
-        monedasRow.innerHTML = '';
-        denominacionesBilletes.forEach(valor => {
-            const div = document.createElement('div');
-            div.className = 'billete';
-            div.draggable = true;
-            div.dataset.valor = valor;
-            div.innerHTML = `<img src="DINERO/${valor} pesos.png" alt="$${valor}" class="img-billete">`;
-            div.onclick = () => pantallaEfectivoAgregar(valor);
-            agregarDragDrop(div, denominacionesBilletes, renderizarBilletesYMonedas);
-            billetesGrid.appendChild(div);
-        });
-        denominacionesMonedas.forEach(valor => {
-            const div = document.createElement('div');
-            div.className = 'moneda';
-            div.draggable = true;
-            div.dataset.valor = valor;
-            div.innerHTML = `<img src="DINERO/${valor} pesos.png" alt="$${valor}" class="img-moneda">`;
-            div.onclick = () => pantallaEfectivoAgregar(valor);
-            agregarDragDrop(div, denominacionesMonedas, renderizarBilletesYMonedas);
-            monedasRow.appendChild(div);
-        });
-    }
-
-    function agregarDragDrop(element, array, rerender) {
-        element.addEventListener('dragstart', e => {
-            e.dataTransfer.setData('valor', element.dataset.valor);
-            element.classList.add('dragging');
-        });
-        element.addEventListener('dragend', e => {
-            element.classList.remove('dragging');
-        });
-        element.addEventListener('dragover', e => {
-            e.preventDefault();
-        });
-        element.addEventListener('drop', e => {
-            e.preventDefault();
-            const valorArrastrado = parseInt(e.dataTransfer.getData('valor'));
-            const valorDestino = parseInt(element.dataset.valor);
-            const idxFrom = array.indexOf(valorArrastrado);
-            const idxTo = array.indexOf(valorDestino);
-            if (idxFrom !== -1 && idxTo !== -1 && idxFrom !== idxTo) {
-                array.splice(idxFrom, 1);
-                array.splice(idxTo, 0, valorArrastrado);
-                rerender();
+    // Permitir cerrar modales al hacer clic fuera del contenido
+    document.addEventListener('DOMContentLoaded', function() {
+        const modales = [
+            { id: 'pantallaEfectivo', close: window.pantallaEfectivoCancelar || function() { document.getElementById('pantallaEfectivo').classList.add('hidden'); } },
+            { id: 'modalVentaManual', close: window.cerrarModalVentaManual },
+            { id: 'modalProductos', close: window.cerrarModalProductos },
+            { id: 'modalRetiro', close: window.cerrarModalRetiro },
+            { id: 'modalIngreso', close: window.cerrarModalIngreso },
+            { id: 'modalReporte', close: window.cerrarModalReporte }
+        ];
+        modales.forEach(({id, close}) => {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.addEventListener('mousedown', function(e) {
+                    if (e.target === modal) {
+                        close();
+                    }
+                });
             }
         });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        renderizarBilletesYMonedas();
     });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarDatosLocalStorage();
-        });
-    </script>
 </body>
+
 </html>
