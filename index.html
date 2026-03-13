@@ -489,25 +489,74 @@ function load(){
   try{txns=JSON.parse(localStorage.getItem(LS_KEYS.txns))||[];}catch(e){txns=[];}
 }
 function seed(){
-  cats=[{id:1,name:'Bebidas',color:'#3b82f6'},{id:2,name:'Comida',color:'#ef4444'},{id:3,name:'Postres',color:'#ec4899'},{id:4,name:'Snacks',color:'#f97316'}];
-  subs=[
-    {id:1,name:'Calientes',catId:1},{id:2,name:'Frías',catId:1},
-    {id:3,name:'Platillos',catId:2},{id:4,name:'Antojitos',catId:2},
-    {id:5,name:'Pasteles',catId:3},{id:6,name:'Helados',catId:3},
-    {id:7,name:'Dulces',catId:4},{id:8,name:'Salados',catId:4}
+  // Categorías del catálogo
+  cats=[
+    {id:1,name:'Bebidas',color:'#3b82f6'},
+    {id:2,name:'Pan Blanco',color:'#ef4444'},
+    {id:3,name:'Pan Dulce',color:'#ec4899'},
+    {id:4,name:'Especial',color:'#6366f1'}
   ];
+  // Subcategorías
+  subs=[
+    {id:1,name:'Chicas',catId:1},
+    {id:2,name:'Grandes',catId:1},
+    {id:3,name:'Normal',catId:2},
+    {id:4,name:'Clasico',catId:3},
+    {id:5,name:'Rellenos',catId:3},
+    {id:6,name:'Diario',catId:3},
+    {id:7,name:'Galletas',catId:3},
+    {id:8,name:'SobrePedido',catId:4},
+    {id:9,name:'Fin de Semana',catId:4}
+  ];
+  // Productos
   prods=[
-    {id:1,name:'Café Americano',price:45,catId:1,subId:1},{id:2,name:'Cappuccino',price:55,catId:1,subId:1},
-    {id:3,name:'Latte',price:60,catId:1,subId:1},{id:4,name:'Té Verde',price:40,catId:1,subId:1},
-    {id:5,name:'Agua Natural',price:20,catId:1,subId:2},{id:6,name:'Limonada',price:35,catId:1,subId:2},
-    {id:7,name:'Jugo Naranja',price:40,catId:1,subId:2},{id:8,name:'Refresco',price:25,catId:1,subId:2},
-    {id:9,name:'Hamburguesa',price:89,catId:2,subId:3},{id:10,name:'Ensalada',price:75,catId:2,subId:3},
-    {id:11,name:'Torta Jamón',price:65,catId:2,subId:4},{id:12,name:'Quesadilla',price:45,catId:2,subId:4},
-    {id:13,name:'Tacos (3)',price:55,catId:2,subId:4},
-    {id:14,name:'Pastel Choco',price:50,catId:3,subId:5},{id:15,name:'Cheesecake',price:55,catId:3,subId:5},
-    {id:16,name:'Helado Vainilla',price:35,catId:3,subId:6},{id:17,name:'Helado Choco',price:35,catId:3,subId:6},
-    {id:18,name:'Chocolate',price:25,catId:4,subId:7},{id:19,name:'Gomitas',price:15,catId:4,subId:7},
-    {id:20,name:'Papas Fritas',price:30,catId:4,subId:8},{id:21,name:'Cacahuates',price:20,catId:4,subId:8}
+    // Bebidas — Chicas
+    {id:1, name:'Americano Ch',   price:40, catId:1, subId:1},
+    {id:2, name:'Latte Ch',       price:40, catId:1, subId:1},
+    {id:3, name:'Capuccino Ch',   price:45, catId:1, subId:1},
+    {id:4, name:'Expresso Ch',    price:40, catId:1, subId:1},
+    {id:5, name:'Té Ch',          price:35, catId:1, subId:1},
+    // Bebidas — Grandes
+    {id:6, name:'Americano G',    price:50, catId:1, subId:2},
+    {id:7, name:'Latte G',        price:50, catId:1, subId:2},
+    {id:8, name:'Capuccino G',    price:55, catId:1, subId:2},
+    {id:9, name:'Té G',           price:40, catId:1, subId:2},
+    {id:10,name:'Expreso G',      price:45, catId:1, subId:2},
+    // Pan Blanco — Normal
+    {id:11,name:'Hogaza Multigrano', price:65, catId:2, subId:3},
+    {id:12,name:'Caja multigrano',   price:65, catId:2, subId:3},
+    {id:13,name:'Baguette',          price:53, catId:2, subId:3},
+    {id:14,name:'Demi Baguette',     price:30, catId:2, subId:3},
+    // Pan Dulce — Clasico
+    {id:15,name:'Croissant',         price:40, catId:3, subId:4},
+    {id:16,name:'Chocolatín',        price:50, catId:3, subId:4},
+    // Pan Dulce — Rellenos
+    {id:17,name:'Croissant Almendra',   price:55, catId:3, subId:5},
+    {id:18,name:'Croissant Frutal',     price:50, catId:3, subId:5},
+    {id:19,name:'Croissant Chocolate',  price:50, catId:3, subId:5},
+    {id:20,name:'Chocolatín Almendrado',price:60, catId:3, subId:5},
+    // Pan Dulce — Diario
+    {id:21,name:'Scone',        price:53, catId:3, subId:6},
+    {id:22,name:'Tarta Rústica',price:43, catId:3, subId:6},
+    {id:23,name:'Cocada',       price:20, catId:3, subId:6},
+    {id:24,name:'Muffin',       price:50, catId:3, subId:6},
+    // Pan Dulce — Galletas
+    {id:25,name:'Galleta Chispas',      price:47, catId:3, subId:7},
+    {id:26,name:'Galleta Avena',        price:47, catId:3, subId:7},
+    {id:27,name:'Galleta Red Velvet',   price:47, catId:3, subId:7},
+    {id:28,name:'Galleta D.Chocolate',  price:47, catId:3, subId:7},
+    // Especial — SobrePedido
+    {id:29,name:'Croipan Grande',  price:120, catId:4, subId:8},
+    {id:30,name:'Croipan Chico',   price:80,  catId:4, subId:8},
+    {id:31,name:'Brioche Grande',  price:120, catId:4, subId:8},
+    {id:32,name:'Blanco Grande',   price:80,  catId:4, subId:8},
+    {id:33,name:'Foccacia Grande', price:450, catId:4, subId:8},
+    {id:34,name:'Foccacia Chica',  price:250, catId:4, subId:8},
+    // Especial — Fin de Semana
+    {id:35,name:'Pan de Chocolate',price:50, catId:4, subId:9},
+    {id:36,name:'Tarta Vasca',     price:90, catId:4, subId:9},
+    {id:37,name:'Rol de Canela',   price:65, catId:4, subId:9},
+    {id:38,name:'Everything',      price:30, catId:4, subId:9}
   ];
   save();
 }
@@ -1613,7 +1662,9 @@ setInterval(checkDayChange,10000);
 // ============================================================
 load();
 pruneOldTxns(); // Mejora 20: purgar al arrancar
-if(!cats.length)seed();
+// Si no hay catálogo, o sigue siendo el demo genérico, carga el catálogo real
+var _isOldDemo=cats.length>0&&cats.some(function(c){return c.name==='Comida'||c.name==='Snacks'||c.name==='Postres';});
+if(!cats.length||_isOldDemo){seed();}
 currentDay=todayStr();
 if(!S.dbFormCatId&&cats.length)S.dbFormCatId=String(cats[0].id);
 renderNow();
