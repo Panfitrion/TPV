@@ -784,7 +784,7 @@ async function guardarPedido() {
     const detalle = collectPedidoData();
 
     const record = {
-        cafeteria_id: parseInt(cafeId),
+        cafeteria_id: cafeId,
         cafe_nombre: cafe.nombre,
         fecha_inicio: fechaStr,
         fecha_fin: fechaFin,
@@ -1038,7 +1038,7 @@ async function loadCalendarPedidos() {
         .gte('fecha_fin', firstOfMonth)
         .order('fecha_inicio', { ascending: true });
 
-    if (cafeId) query = query.eq('cafeteria_id', parseInt(cafeId));
+    if (cafeId) query = query.eq('cafeteria_id', cafeId);
 
     const { data, error } = await query;
     if (error) {
@@ -1134,8 +1134,8 @@ function showPedidoDetail(pedido) {
             <h4>📦 ${pedido.cafe_nombre} — Semana ${formatDateShort(new Date(pedido.fecha_inicio + 'T00:00:00'))} al ${formatDateShort(new Date(pedido.fecha_fin + 'T00:00:00'))}</h4>
             ${tableHtml}
             <div class="cal-detail-actions">
-                <button class="win-btn btn-warning" onclick="editarPedido(${pedido.id})">✏️ Editar</button>
-                <button class="win-btn btn-danger" onclick="eliminarPedido(${pedido.id})">🗑️ Eliminar</button>
+                <button class="win-btn btn-warning" onclick="editarPedido('${pedido.id}')">✏️ Editar</button>
+                <button class="win-btn btn-danger" onclick="eliminarPedido('${pedido.id}')">🗑️ Eliminar</button>
                 <button class="win-btn" onclick="document.getElementById('cal-detail-container').innerHTML=''">✖ Cerrar</button>
             </div>
         </div>`;
