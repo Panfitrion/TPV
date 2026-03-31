@@ -402,6 +402,181 @@
             border-top: 2px solid var(--border-color);
         }
 
+        /* ====== ADMIN PANEL ====== */
+        .admin-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .admin-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 20px 24px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .admin-section {
+            padding: 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .admin-section:last-child { border-bottom: none; }
+        .admin-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #94a3b8;
+            margin: 0 0 16px 0;
+        }
+        .admin-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .admin-input {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            background: #f8fafc;
+            color: #0f172a;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .admin-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+            background: white;
+        }
+        .admin-input::placeholder { color: #cbd5e1; }
+        .admin-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Inter', sans-serif;
+        }
+        .admin-btn-blue {
+            background: #3b82f6;
+            color: white;
+        }
+        .admin-btn-blue:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .admin-btn-emerald {
+            background: #10b981;
+            color: white;
+        }
+        .admin-btn-emerald:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(5,150,105,0.3); }
+        .admin-btn-red {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .admin-btn-red:hover { background: #fecaca; }
+        .admin-btn-slate {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .admin-btn-slate:hover { background: #e2e8f0; }
+        .admin-btn-amber {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .admin-btn-amber:hover { background: #fde68a; }
+
+        .cafe-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            cursor: pointer;
+        }
+        .cafe-card:hover { border-color: #3b82f6; box-shadow: 0 2px 8px rgba(59,130,246,0.1); }
+        .cafe-card.selected { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+        .cafe-card-name { font-weight: 600; font-size: 0.95rem; color: #0f172a; }
+        .cafe-card-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        .cafe-card-badge.dev { background: #fef3c7; color: #d97706; }
+        .cafe-card-actions { display: flex; gap: 6px; }
+
+        .producto-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 14px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: box-shadow 0.15s;
+        }
+        .producto-row:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .producto-row .prod-name { flex: 1; font-weight: 500; color: #1e293b; }
+        .producto-row .prod-price { font-weight: 700; color: #3b82f6; min-width: 70px; text-align: right; }
+
+        .admin-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        .admin-empty svg { margin-bottom: 8px; opacity: 0.4; }
+
+        .admin-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 20px 0;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            display: inline-block;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #cbd5e1;
+            border-radius: 24px;
+            transition: 0.2s;
+        }
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background: #3b82f6; }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+
         @media (max-width: 700px) {
             body { padding: 12px; }
             .controls-bar { flex-direction: column; align-items: flex-start; }
@@ -424,6 +599,7 @@
 <div class="tabs-nav">
     <button class="tab-btn active" onclick="switchTab('tab-pedido')">📋 Crear Pedido</button>
     <button class="tab-btn" onclick="switchTab('tab-calendario')">📅 Calendario</button>
+    <button class="tab-btn" onclick="switchTab('tab-admin')">⚙️ Administración</button>
 </div>
 
 <!-- ====== TAB: CREAR PEDIDO ====== -->
@@ -499,12 +675,56 @@
     </div>
 </div>
 
+<!-- ====== TAB: ADMINISTRACIÓN ====== -->
+<div class="tab-content" id="tab-admin">
+    <div class="admin-panel">
+        <div class="admin-header">⚙️ Administración de Cafeterías y Productos</div>
+
+        <!-- Sección: Agregar cafetería -->
+        <div class="admin-section">
+            <p class="admin-section-title">➕ Nueva Cafetería</p>
+            <div class="admin-row">
+                <input type="text" id="admin-new-cafe-name" class="admin-input" placeholder="Nombre de la cafetería" style="flex:1;min-width:200px;">
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748b;">
+                    <span class="toggle-switch">
+                        <input type="checkbox" id="admin-new-cafe-dev">
+                        <span class="toggle-slider"></span>
+                    </span>
+                    Devoluciones
+                </label>
+                <button class="admin-btn admin-btn-blue" onclick="adminAgregarCafe()">➕ Agregar</button>
+            </div>
+        </div>
+
+        <!-- Sección: Lista de cafeterías -->
+        <div class="admin-section">
+            <p class="admin-section-title">🏪 Cafeterías Registradas</p>
+            <div id="admin-cafe-list"></div>
+        </div>
+
+        <div class="admin-divider"></div>
+
+        <!-- Sección: Productos de la cafetería seleccionada -->
+        <div class="admin-section">
+            <p class="admin-section-title" id="admin-productos-title">📦 Productos — Selecciona una cafetería arriba</p>
+            <div id="admin-productos-container">
+                <div class="admin-empty">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    <p>Selecciona una cafetería para ver y administrar sus productos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 // =====================================================
 // CONFIGURACIÓN SUPABASE
 // =====================================================
-const SUPABASE_URL = "https://zywvzfaoezafbnfrceyl.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5d3Z6ZmFvZXphZmJuZnJjZXlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2OTEyMTMsImV4cCI6MjA4OTI2NzIxM30.QDnDTeTIlSL7sZE_9SDadc0dVQd4n8kB4eXzOs-d6gA";
+const SUPABASE_URL = "https://oqlwyeqeiniajmfvrztf.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xbHd5ZXFlaW5pYWptZnZyenRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5MzQ4MzksImV4cCI6MjA5MDUxMDgzOX0.9_3tzpBwWr6rhyni-8n4SMVN4kkFq8fdQ9p5nXPKU40";
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -580,10 +800,13 @@ function switchTab(tabId) {
     document.getElementById(tabId).classList.add('active');
     const btns = document.querySelectorAll('.tab-btn');
     if (tabId === 'tab-pedido') btns[0].classList.add('active');
-    else {
+    else if (tabId === 'tab-calendario') {
         btns[1].classList.add('active');
         renderCalendar();
         loadCalendarPedidos();
+    } else if (tabId === 'tab-admin') {
+        btns[2].classList.add('active');
+        adminLoadCafes();
     }
 }
 
@@ -649,7 +872,7 @@ async function buildPedidoTable(preloadData = null) {
             <th>Total</th>
         </tr>`;
 
-    const precios = cafe.precios_cafeteria || [];
+    const precios = (cafe.precios_cafeteria || []).sort((a, b) => (a.orden ?? 999) - (b.orden ?? 999));
     let html = '';
 
     precios.forEach(p => {
@@ -1175,6 +1398,195 @@ async function eliminarPedido(pedidoId) {
         document.getElementById('cal-detail-container').innerHTML = '';
         await loadCalendarPedidos();
     }
+}
+
+// =====================================================
+// ADMINISTRACIÓN
+// =====================================================
+let adminSelectedCafeId = null;
+
+async function adminLoadCafes() {
+    const { data: cafes, error } = await db.from('cafeterias').select('*').order('nombre');
+    if (error) return showToast('Error cargando cafeterías: ' + error.message, 'error');
+
+    const container = document.getElementById('admin-cafe-list');
+    if (!cafes || cafes.length === 0) {
+        container.innerHTML = '<div class="admin-empty"><p>No hay cafeterías registradas. Agrega una arriba.</p></div>';
+        return;
+    }
+
+    container.innerHTML = cafes.map(c => `
+        <div class="cafe-card ${adminSelectedCafeId == c.id ? 'selected' : ''}" onclick="adminSelectCafe(${c.id})">
+            <div>
+                <span class="cafe-card-name">${c.nombre}</span>
+                ${c.devolucion ? '<span class="cafe-card-badge dev" style="margin-left:8px">Devoluciones</span>' : ''}
+            </div>
+            <div class="cafe-card-actions">
+                <button class="admin-btn admin-btn-amber" onclick="event.stopPropagation(); adminEditCafe(${c.id}, '${c.nombre.replace(/'/g, "\\'")}', ${c.devolucion})" title="Editar">✏️</button>
+                <button class="admin-btn admin-btn-red" onclick="event.stopPropagation(); adminEliminarCafe(${c.id}, '${c.nombre.replace(/'/g, "\\'")}')" title="Eliminar">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function adminAgregarCafe() {
+    const nombre = document.getElementById('admin-new-cafe-name').value.trim();
+    const devolucion = document.getElementById('admin-new-cafe-dev').checked;
+
+    if (!nombre) return showToast('Escribe el nombre de la cafetería.', 'error');
+
+    const { error } = await db.from('cafeterias').insert([{ nombre, devolucion }]);
+    if (error) return showToast('Error: ' + error.message, 'error');
+
+    document.getElementById('admin-new-cafe-name').value = '';
+    document.getElementById('admin-new-cafe-dev').checked = false;
+    showToast(`Cafetería "${nombre}" agregada.`, 'success');
+    await adminLoadCafes();
+    await renderCafeteriaSelector();
+}
+
+async function adminEditCafe(id, nombreActual, devActual) {
+    const nuevoNombre = prompt('Nuevo nombre para la cafetería:', nombreActual);
+    if (nuevoNombre === null) return;
+    if (!nuevoNombre.trim()) return showToast('El nombre no puede estar vacío.', 'error');
+
+    const nuevaDev = confirm('¿Esta cafetería maneja devoluciones?');
+
+    const { error } = await db.from('cafeterias').update({ nombre: nuevoNombre.trim(), devolucion: nuevaDev }).eq('id', id);
+    if (error) return showToast('Error: ' + error.message, 'error');
+
+    showToast('Cafetería actualizada.', 'success');
+    await adminLoadCafes();
+    await renderCafeteriaSelector();
+    if (adminSelectedCafeId == id) adminLoadProductos(id);
+}
+
+async function adminEliminarCafe(id, nombre) {
+    if (!confirm(`¿Eliminar la cafetería "${nombre}" y todos sus productos?`)) return;
+
+    // Eliminar productos primero
+    await db.from('precios_cafeteria').delete().eq('cafeteria_id', id);
+    const { error } = await db.from('cafeterias').delete().eq('id', id);
+    if (error) return showToast('Error: ' + error.message, 'error');
+
+    if (adminSelectedCafeId == id) {
+        adminSelectedCafeId = null;
+        document.getElementById('admin-productos-title').textContent = '📦 Productos — Selecciona una cafetería arriba';
+        document.getElementById('admin-productos-container').innerHTML = '<div class="admin-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg><p>Selecciona una cafetería para ver y administrar sus productos</p></div>';
+    }
+
+    showToast(`Cafetería "${nombre}" eliminada.`, 'success');
+    await adminLoadCafes();
+    await renderCafeteriaSelector();
+}
+
+async function adminSelectCafe(cafeId) {
+    adminSelectedCafeId = cafeId;
+    // Re-render cards para marcar selección
+    await adminLoadCafes();
+    await adminLoadProductos(cafeId);
+}
+
+async function adminLoadProductos(cafeId) {
+    const { data: cafe } = await db.from('cafeterias').select('nombre').eq('id', cafeId).single();
+    const { data: productos, error } = await db.from('precios_cafeteria').select('*').eq('cafeteria_id', cafeId).order('orden', { ascending: true });
+
+    if (error) return showToast('Error: ' + error.message, 'error');
+
+    document.getElementById('admin-productos-title').textContent = `📦 Productos de "${cafe.nombre}"`;
+
+    let html = `
+        <div class="admin-row" style="margin-bottom:16px;">
+            <input type="text" id="admin-new-prod-name" class="admin-input" placeholder="Nombre del producto" style="flex:1;min-width:160px;">
+            <input type="number" id="admin-new-prod-price" class="admin-input" placeholder="Precio" style="width:100px;" min="0" step="0.5">
+            <button class="admin-btn admin-btn-emerald" onclick="adminAgregarProducto(${cafeId})">➕ Agregar</button>
+        </div>`;
+
+    if (!productos || productos.length === 0) {
+        html += '<div class="admin-empty"><p>No hay productos. Agrega uno arriba.</p></div>';
+    } else {
+        html += productos.map((p, idx) => `
+            <div class="producto-row">
+                <span style="display:flex;flex-direction:column;gap:2px;margin-right:4px;">
+                    <button class="admin-btn admin-btn-slate" style="padding:2px 6px;font-size:11px;" onclick="adminMoveProducto(${cafeId}, ${p.id}, 'up')" ${idx === 0 ? 'disabled style="padding:2px 6px;font-size:11px;opacity:0.3;cursor:default;"' : ''} title="Subir">▲</button>
+                    <button class="admin-btn admin-btn-slate" style="padding:2px 6px;font-size:11px;" onclick="adminMoveProducto(${cafeId}, ${p.id}, 'down')" ${idx === productos.length - 1 ? 'disabled style="padding:2px 6px;font-size:11px;opacity:0.3;cursor:default;"' : ''} title="Bajar">▼</button>
+                </span>
+                <span class="prod-name">${p.nombre_producto}</span>
+                <span class="prod-price">$${parseFloat(p.precio).toFixed(2)}</span>
+                <button class="admin-btn admin-btn-amber" onclick="adminEditProducto(${p.id}, '${p.nombre_producto.replace(/'/g, "\\'")}', ${p.precio}, ${cafeId})" title="Editar">✏️</button>
+                <button class="admin-btn admin-btn-red" onclick="adminEliminarProducto(${p.id}, '${p.nombre_producto.replace(/'/g, "\\'")}', ${cafeId})" title="Eliminar">🗑️</button>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('admin-productos-container').innerHTML = html;
+}
+
+async function adminAgregarProducto(cafeId) {
+    const nombre = document.getElementById('admin-new-prod-name').value.trim();
+    const precio = parseFloat(document.getElementById('admin-new-prod-price').value) || 0;
+
+    if (!nombre) return showToast('Escribe el nombre del producto.', 'error');
+    if (precio <= 0) return showToast('Ingresa un precio válido.', 'error');
+
+    // Obtener el máximo orden actual para agregar al final
+    const { data: existing } = await db.from('precios_cafeteria').select('orden').eq('cafeteria_id', cafeId).order('orden', { ascending: false }).limit(1);
+    const nextOrden = (existing && existing.length > 0 && existing[0].orden != null) ? existing[0].orden + 1 : 0;
+
+    const { error } = await db.from('precios_cafeteria').insert([{ cafeteria_id: cafeId, nombre_producto: nombre, precio, orden: nextOrden }]);
+    if (error) return showToast('Error: ' + error.message, 'error');
+
+    showToast(`Producto "${nombre}" agregado.`, 'success');
+    await adminLoadProductos(cafeId);
+}
+
+async function adminEditProducto(prodId, nombreActual, precioActual, cafeId) {
+    const nuevoNombre = prompt('Nombre del producto:', nombreActual);
+    if (nuevoNombre === null) return;
+    if (!nuevoNombre.trim()) return showToast('El nombre no puede estar vacío.', 'error');
+
+    const nuevoPrecioStr = prompt('Precio:', precioActual);
+    if (nuevoPrecioStr === null) return;
+    const nuevoPrecio = parseFloat(nuevoPrecioStr);
+    if (isNaN(nuevoPrecio) || nuevoPrecio <= 0) return showToast('Precio inválido.', 'error');
+
+    const { error } = await db.from('precios_cafeteria').update({ nombre_producto: nuevoNombre.trim(), precio: nuevoPrecio }).eq('id', prodId);
+    if (error) return showToast('Error: ' + error.message, 'error');
+
+    showToast('Producto actualizado.', 'success');
+    await adminLoadProductos(cafeId);
+}
+
+async function adminEliminarProducto(prodId, nombre, cafeId) {
+    if (!confirm(`¿Eliminar el producto "${nombre}"?`)) return;
+
+    const { error } = await db.from('precios_cafeteria').delete().eq('id', prodId);
+    if (error) return showToast('Error: ' + error.message, 'error');
+
+    showToast(`Producto "${nombre}" eliminado.`, 'success');
+    await adminLoadProductos(cafeId);
+}
+
+async function adminMoveProducto(cafeId, prodId, direction) {
+    // Obtener todos los productos ordenados
+    const { data: productos } = await db.from('precios_cafeteria').select('id, orden').eq('cafeteria_id', cafeId).order('orden', { ascending: true });
+    if (!productos || productos.length < 2) return;
+
+    const idx = productos.findIndex(p => p.id === prodId);
+    if (idx === -1) return;
+    if (direction === 'up' && idx === 0) return;
+    if (direction === 'down' && idx === productos.length - 1) return;
+
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+
+    // Intercambiar valores de orden
+    const ordenA = productos[idx].orden;
+    const ordenB = productos[swapIdx].orden;
+
+    await db.from('precios_cafeteria').update({ orden: ordenB }).eq('id', productos[idx].id);
+    await db.from('precios_cafeteria').update({ orden: ordenA }).eq('id', productos[swapIdx].id);
+
+    await adminLoadProductos(cafeId);
 }
 
 // =====================================================
